@@ -63,8 +63,6 @@ export default function BottomSheet() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const controls = useDragControls();
-
   const CLOSED_Y = 480;
   const OPEN_Y = 80;
 
@@ -78,8 +76,7 @@ export default function BottomSheet() {
       transition={{ type: "spring", damping: 20, stiffness: 100 }}
       className="fixed flex flex-col bottom-0 left-1/2 -translate-x-1/2 bg-white shadow-sm w-full max-w-md z-40 h-full rounded-t-3xl"
       drag="y" // 세로 방향 드래그 허용
-      dragListener={isOpen ? false : true} // 바텀시트 전체에 대해서는 드래그 감지 끄기
-      dragControls={controls} // 컨트롤러 연결
+      dragListener={true} // 바텀시트 전체에 대해서는 드래그 감지 끄기
       dragConstraints={{ top: OPEN_Y, bottom: CLOSED_Y }}
       dragElastic={0}
       onDragEnd={(_, info) => {
@@ -93,10 +90,7 @@ export default function BottomSheet() {
       }}
     >
       {/* 회색 바 */}
-      <div
-        onPointerDown={(e) => controls.start(e)}
-        className="flex justify-center py-4 cursor-grab active:cursor-grabbing"
-      >
+      <div className="flex justify-center py-4 cursor-grab active:cursor-grabbing">
         <div className="w-15 h-1.5 bg-gray-300 rounded-full" />
       </div>
 
