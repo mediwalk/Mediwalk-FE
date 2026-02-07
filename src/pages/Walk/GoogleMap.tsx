@@ -67,7 +67,7 @@ export default function MyGoogleMap() {
         {/* 현재 내 위치에 마커 표시 */}
         <MarkerF position={currentPosition} />
         <button
-          className="absolute z-10 bottom-15 right-3 cursor-pointer bg-white rounded-full p-2 shadow-sm"
+          className="absolute z-10 bottom-25 right-4 cursor-pointer bg-white rounded-full p-2 shadow-sm"
           onClick={handleCurrentLocation}
         >
           <TbCurrentLocation className="size-5" />
