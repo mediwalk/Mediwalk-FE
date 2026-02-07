@@ -1,4 +1,4 @@
-import { motion, useDragControls, useMotionValue } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { useState } from "react";
 import { BsStars } from "react-icons/bs";
 import BinCard from "./BinCard";
