@@ -13,7 +13,7 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="w-full flex bg-background items-center z-50 px-10 py-4 justify-around ">
+    <nav className="w-full h-18 flex bg-background items-center z-50 px-10 py-4 justify-around ">
       <Link
         to="/"
         className={`flex flex-col items-center justify-center gap-1 ${getLink("/")}`}

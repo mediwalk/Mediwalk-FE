@@ -15,7 +15,7 @@ interface BinCardProps {
 
 const BinCard = ({ info }: BinCardProps) => {
   return (
-    <div className="flex p-4 gap-2 bg-white w-full h-24 rounded-2xl shadow-xs">
+    <div className="flex p-4 gap-2 bg-white w-full h-24 rounded-2xl border border-gray-100 shadow-xs">
       <div>
         <PiMapPinFill className="text-primary size-5 mt-0.5" />
       </div>

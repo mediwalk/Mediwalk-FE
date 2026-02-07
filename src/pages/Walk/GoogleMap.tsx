@@ -5,7 +5,7 @@ import { TbCurrentLocation } from "react-icons/tb";
 
 const containerStyle = {
   width: "100%",
-  height: "450px",
+  height: "500px",
 };
 
 // 위치를 못 가져왔을 때 보여줄 기본 좌표
@@ -67,7 +67,7 @@ export default function MyGoogleMap() {
         {/* 현재 내 위치에 마커 표시 */}
         <MarkerF position={currentPosition} />
         <button
-          className="absolute z-10 bottom-6 right-3 cursor-pointer bg-white rounded-full p-2 shadow-sm"
+          className="absolute z-10 bottom-15 right-3 cursor-pointer bg-white rounded-full p-2 shadow-sm"
           onClick={handleCurrentLocation}
         >
           <TbCurrentLocation className="size-5" />
