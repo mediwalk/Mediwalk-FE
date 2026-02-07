@@ -106,6 +106,7 @@ export default function BottomSheet() {
         <div className="flex flex-col  flex-1 gap-4 min-h-0">
           <div className="font-bold text-lg">근처 폐의약품 수거함</div>
           <div
+            onPointerDown={(e) => e.stopPropagation()}
             className={`flex flex-col flex-1 gap-2 pb-45 no-scrollbar ${isOpen ? "overflow-y-auto" : "overflow-hidden"}`}
           >
             {mockBinInfo.map((bin) => {
