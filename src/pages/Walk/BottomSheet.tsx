@@ -1,4 +1,4 @@
-import { motion, useMotionValue } from "framer-motion";
+import { motion, useDragControls, useMotionValue } from "framer-motion";
 import { useState } from "react";
 import { BsStars } from "react-icons/bs";
 import BinCard from "./BinCard";
@@ -67,6 +67,7 @@ export default function BottomSheet() {
   const OPEN_Y = 80;
 
   const y = useMotionValue(CLOSED_Y);
+  const controls = useDragControls();
 
   return (
     <motion.div
@@ -76,7 +77,8 @@ export default function BottomSheet() {
       transition={{ type: "spring", damping: 20, stiffness: 100 }}
       className="fixed flex flex-col bottom-0 left-1/2 -translate-x-1/2 bg-white shadow-sm w-full max-w-md z-40 h-full rounded-t-3xl"
       drag="y" // 세로 방향 드래그 허용
-      dragListener={true} // 바텀시트 전체에 대해서는 드래그 감지 끄기
+      dragListener={isOpen ? false : true} // 바텀시트 전체에 대해서는 드래그 감지 끄기
+      dragControls={controls}
       dragConstraints={{ top: OPEN_Y, bottom: CLOSED_Y }}
       dragElastic={0}
       onDragEnd={(_, info) => {
@@ -90,7 +92,10 @@ export default function BottomSheet() {
       }}
     >
       {/* 회색 바 */}
-      <div className="flex justify-center py-4 cursor-grab active:cursor-grabbing">
+      <div
+        onPointerDown={(e) => controls.start(e)}
+        className="flex justify-center py-4 cursor-grab active:cursor-grabbing touch-none"
+      >
         <div className="w-15 h-1.5 bg-gray-300 rounded-full" />
       </div>
 
@@ -106,7 +111,6 @@ export default function BottomSheet() {
         <div className="flex flex-col  flex-1 gap-4 min-h-0">
           <div className="font-bold text-lg">근처 폐의약품 수거함</div>
           <div
-            onPointerDown={(e) => e.stopPropagation()}
             className={`flex flex-col flex-1 gap-2 pb-45 no-scrollbar ${isOpen ? "overflow-y-auto" : "overflow-hidden"}`}
           >
             {mockBinInfo.map((bin) => {
