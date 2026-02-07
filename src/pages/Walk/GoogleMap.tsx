@@ -1,6 +1,6 @@
 // src/pages/Home/GoogleMap.tsx
 import { useCallback, useEffect, useState } from "react";
-import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
 import { TbCurrentLocation } from "react-icons/tb";
 
 const containerStyle = {
@@ -14,11 +14,10 @@ const defaultCenter = {
   lng: 126.9723,
 };
 
-// 나중에 .env파일로 api키 처리
 export default function MyGoogleMap() {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyBXPOKWGMS_ojfQbi_HZyfWLQqFX5cft9Y",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
   // 지도 인스턴스와 현재 위치를 저장할 상태
@@ -66,7 +65,7 @@ export default function MyGoogleMap() {
         onLoad={(map) => setMap(map)}
       >
         {/* 현재 내 위치에 마커 표시 */}
-        <Marker position={currentPosition} />
+        <MarkerF position={currentPosition} />
         <button
           className="absolute z-10 bottom-6 right-3 cursor-pointer bg-white rounded-full p-2 shadow-sm"
           onClick={handleCurrentLocation}
