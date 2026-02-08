@@ -4,6 +4,7 @@ import Walk from "./pages/Walk/Walk";
 import Reward from "./pages/Reward/Reward";
 import Mypage from "./pages/Mypage/Mypage";
 import NavBar from "./components/NavBar";
+import MissionDetail from "./pages/Home/Mission/MissionDetail";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <main className="flex-1 overflow-y-auto relative w-full no-scrollbar">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/mission/:missionId" element={<MissionDetail />} />
               <Route path="/walk" element={<Walk />} />
               <Route path="/reward" element={<Reward />} />
               <Route path="/mypage" element={<Mypage />} />
