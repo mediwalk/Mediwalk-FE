@@ -1,12 +1,4 @@
-interface BinInfo {
-  id: number;
-  title: string;
-  detail: string;
-  distance: number;
-  time: number;
-  step: number;
-  reward: number;
-}
+import type { BinInfo } from "./BottomSheet";
 
 interface BinCardProps {
   info: BinInfo;

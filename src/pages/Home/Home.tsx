@@ -3,8 +3,16 @@ import { FaAngleRight } from "react-icons/fa6";
 import MissionCard from "./MissionCard";
 import BinCard from "./BinCard";
 
+export interface MissionInfo {
+  id: number;
+  type: string;
+  title: string;
+  detail: string;
+  point: string;
+}
+
 const Home = () => {
-  const mockMissions = [
+  const mockMissions: MissionInfo[] = [
     {
       id: 1,
       type: "medicine",

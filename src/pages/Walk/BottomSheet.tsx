@@ -3,8 +3,18 @@ import { useState } from "react";
 import { BsStars } from "react-icons/bs";
 import BinCard from "./BinCard";
 
+export interface BinInfo {
+  id: number;
+  title: string;
+  detail: string;
+  distance: number;
+  time: number;
+  step: number;
+  reward: number;
+}
+
 export default function BottomSheet() {
-  const mockBinInfo = [
+  const mockBinInfo: BinInfo[] = [
     {
       id: 1,
       title: "강남구 보건소",

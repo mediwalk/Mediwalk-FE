@@ -1,14 +1,7 @@
 import { PiPillFill } from "react-icons/pi";
 import { FaWalking } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
-
-interface MissionInfo {
-  id: number;
-  type: string;
-  title: string;
-  detail: string;
-  point: string;
-}
+import type { MissionInfo } from "./Home";
 
 interface MissionCardProps {
   info: MissionInfo;
