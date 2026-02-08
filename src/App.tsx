@@ -7,6 +7,12 @@ import NavBar from "./components/NavBar";
 import MissionDetail from "./pages/Home/Mission/MissionDetail";
 
 function App() {
+  // 네비게이션바 숨길 페이지 설정
+  const hideNavBarPaths = ["/mission"];
+  const hideNavBar = hideNavBarPaths.some((path) =>
+    location.pathname.startsWith(path),
+  );
+
   return (
     <BrowserRouter>
       {/*} 1. 전체 배경 (PC에서 보이는 회색 배경 */}
@@ -22,7 +28,7 @@ function App() {
               <Route path="/mypage" element={<Mypage />} />
             </Routes>
           </main>
-          <NavBar />
+          {!hideNavBar && <NavBar />}
         </div>
       </div>
     </BrowserRouter>
