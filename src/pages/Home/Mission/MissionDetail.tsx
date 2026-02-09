@@ -42,7 +42,7 @@ const MissionDetail = () => {
   );
 
   return (
-    <div className="px-6 h-screen flex flex-col overflow-hidden">
+    <div className="px-6 h-dvh flex flex-col overflow-hidden">
       {/* 헤더 */}
       <header className="flex h-16 items-center shrink-0">
         <div className="cursor-pointer">
