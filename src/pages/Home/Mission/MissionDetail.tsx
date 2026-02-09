@@ -155,42 +155,6 @@ const MissionDetail = () => {
                     onToggle={() => setIsPedestrianZone(!isPedestrianZone)}
                   />
                 </div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">보행자 전용</p>
-                    <p className="text-xs text-gray-500">
-                      보행자 전용 도로의 안전한 길을 추천합니다.
-                    </p>
-                  </div>
-                  <ToggleButton
-                    isOn={isPedestrianZone}
-                    onToggle={() => setIsPedestrianZone(!isPedestrianZone)}
-                  />
-                </div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">보행자 전용</p>
-                    <p className="text-xs text-gray-500">
-                      보행자 전용 도로의 안전한 길을 추천합니다.
-                    </p>
-                  </div>
-                  <ToggleButton
-                    isOn={isPedestrianZone}
-                    onToggle={() => setIsPedestrianZone(!isPedestrianZone)}
-                  />
-                </div>
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">보행자 전용</p>
-                    <p className="text-xs text-gray-500">
-                      보행자 전용 도로의 안전한 길을 추천합니다.
-                    </p>
-                  </div>
-                  <ToggleButton
-                    isOn={isPedestrianZone}
-                    onToggle={() => setIsPedestrianZone(!isPedestrianZone)}
-                  />
-                </div>
               </div>
             </div>
           </div>
