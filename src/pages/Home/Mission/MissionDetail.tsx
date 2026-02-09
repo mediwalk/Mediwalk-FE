@@ -155,13 +155,49 @@ const MissionDetail = () => {
                     onToggle={() => setIsPedestrianZone(!isPedestrianZone)}
                   />
                 </div>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">보행자 전용</p>
+                    <p className="text-xs text-gray-500">
+                      보행자 전용 도로의 안전한 길을 추천합니다.
+                    </p>
+                  </div>
+                  <ToggleButton
+                    isOn={isPedestrianZone}
+                    onToggle={() => setIsPedestrianZone(!isPedestrianZone)}
+                  />
+                </div>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">보행자 전용</p>
+                    <p className="text-xs text-gray-500">
+                      보행자 전용 도로의 안전한 길을 추천합니다.
+                    </p>
+                  </div>
+                  <ToggleButton
+                    isOn={isPedestrianZone}
+                    onToggle={() => setIsPedestrianZone(!isPedestrianZone)}
+                  />
+                </div>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">보행자 전용</p>
+                    <p className="text-xs text-gray-500">
+                      보행자 전용 도로의 안전한 길을 추천합니다.
+                    </p>
+                  </div>
+                  <ToggleButton
+                    isOn={isPedestrianZone}
+                    onToggle={() => setIsPedestrianZone(!isPedestrianZone)}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </section>
       </div>
       {/* 하단 고정 버튼 영역 */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-6 py-10">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-6 pb-8 bg-background">
         <div>
           <button className="w-full py-4 bg-primary rounded-xl text-white font-semibold active:scale-99 transition-transform">
             미션 시작하기
