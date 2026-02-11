@@ -1,6 +1,7 @@
 import { motion, useDragControls, type PanInfo } from "framer-motion";
 import { useEffect, useState } from "react";
 import BinCard from "./BinCard";
+import { useOutletContext, useParams } from "react-router-dom";
 
 export interface BinInfo {
   id: number;
@@ -12,15 +13,7 @@ export interface BinInfo {
   reward: number;
 }
 
-interface BottomSheetProps {
-  sheetState: "half" | "collapsed" | "expanded";
-  setSheetState: (state: "half" | "collapsed" | "expanded") => void;
-}
-
-export default function BottomSheet({
-  sheetState,
-  setSheetState,
-}: BottomSheetProps) {
+export default function BottomSheet() {
   const mockBinInfo: BinInfo[] = [
     {
       id: 1,
@@ -78,8 +71,23 @@ export default function BottomSheet({
     },
   ];
 
-  // 선택된 카드 상태관리
-  const [selectedBinId, setSelectedBinId] = useState<number | null>(null);
+  // 부모(Walk)가 내려준 상태 꺼내기
+  const { sheetState, setSheetState } = useOutletContext<{
+    sheetState: "half" | "collapsed" | "expanded";
+    setSheetState: (s: any) => void;
+  }>();
+
+  const { binId } = useParams();
+  const [selectedBinId, setSelectedBinId] = useState<number | null>(
+    binId ? Number(binId) : null,
+  );
+
+  useEffect(() => {
+    if (binId) {
+      setSelectedBinId(Number(binId));
+      setSheetState("expanded");
+    }
+  }, [binId, setSheetState]);
 
   // 화면 높이 계산
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);

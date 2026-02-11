@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import type { BinInfo } from "./BottomSheet";
 import { BsStars } from "react-icons/bs";
 
@@ -8,6 +9,7 @@ interface BinCardProps {
 }
 
 export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
+  const navivgate = useNavigate();
   return (
     <div
       onClick={onClick}
@@ -32,7 +34,10 @@ export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
         </span>
       </div>
       {isSelected && (
-        <button className="w-full py-3 mt-1 text-sm font-semibold bg-primary text-white rounded-lg flex justify-center items-center gap-2">
+        <button
+          onClick={() => navivgate(`/walk/${info.id}/filter`)}
+          className="w-full py-3 mt-1 text-sm font-semibold bg-primary text-white rounded-lg flex justify-center items-center gap-2"
+        >
           <BsStars className="size-4" />
           <span>AI 맞춤 경로 디자인</span>
         </button>
