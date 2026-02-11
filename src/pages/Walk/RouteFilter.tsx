@@ -5,7 +5,7 @@ const RouteFilter = () => {
   const navigate = useNavigate();
   const { binId } = useParams();
 
-  // 💡 X 버튼 클릭 시 /walk/:binId 로 이동하여 리스트 상태 복구
+  // 닫힘
   const handleClose = () => {
     navigate(`/walk/${binId}`);
   };
@@ -13,10 +13,10 @@ const RouteFilter = () => {
   return (
     // 부모의 지도 위에 덮이는 고정 레이아웃
     <div className="fixed inset-x-0 bottom-0 top-20 bg-white max-w-md mx-auto z-50 rounded-t-3xl flex flex-col overflow-hidden">
-      <div className="px-6 py-6 flex justify-between items-center border-b border-gray-50">
+      <div className="px-5.5 pb-5.5 pt-9 flex justify-between items-center border-b border-gray-50">
         <h2 className="text-xl font-bold">AI 맞춤 경로 디자인</h2>
         <button onClick={handleClose} className="p-1">
-          <IoClose className="size-7 text-gray-400" />
+          <IoClose className="size-8 text-[#52575E]" />
         </button>
       </div>
 

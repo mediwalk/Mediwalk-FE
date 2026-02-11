@@ -12,7 +12,7 @@ function Layout() {
   const location = useLocation();
 
   // 네비게이션바 숨길 페이지 설정
-  const hideNavBarPaths = ["/mission", "/walk/route"];
+  const hideNavBarPaths = ["/mission", "/walk/filter"];
   const hideNavBar = hideNavBarPaths.some((path) =>
     location.pathname.startsWith(path),
   );
@@ -32,7 +32,7 @@ function Layout() {
               {/* /walk/:binId 진입 시: 특정 수거함 선택 상태 */}
               <Route path=":binId" element={<BottomSheet />} />
               {/* /walk/:binId/filter 진입 시: AI 필터 설정 상태 */}
-              <Route path=":binId/filter" element={<RouteFilter />} />
+              <Route path="filter/:binId" element={<RouteFilter />} />
             </Route>
 
             <Route path="/reward" element={<Reward />} />

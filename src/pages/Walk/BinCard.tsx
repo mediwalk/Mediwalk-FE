@@ -35,7 +35,7 @@ export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
       </div>
       {isSelected && (
         <button
-          onClick={() => navivgate(`/walk/${info.id}/filter`)}
+          onClick={() => navivgate(`/walk/filter/${info.id}`)}
           className="w-full py-3 mt-1 text-sm font-semibold bg-primary text-white rounded-lg flex justify-center items-center gap-2"
         >
           <BsStars className="size-4" />
