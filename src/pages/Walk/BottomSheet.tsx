@@ -1,6 +1,5 @@
 import { motion, useDragControls, type PanInfo } from "framer-motion";
 import { useEffect, useState } from "react";
-import { BsStars } from "react-icons/bs";
 import BinCard from "./BinCard";
 
 export interface BinInfo {
@@ -79,6 +78,9 @@ export default function BottomSheet({
     },
   ];
 
+  // 선택된 카드 상태관리
+  const [selectedBinId, setSelectedBinId] = useState<number | null>(null);
+
   // 화면 높이 계산
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   useEffect(() => {
@@ -146,20 +148,24 @@ export default function BottomSheet({
 
       {/* 내부 콘텐츠 영역 */}
       <div className="px-6 flex flex-col h-full overflow-hidden">
-        {/* 2번 영역: AI 맞춤 경로 디자인 버튼 */}
-        <button className="w-full py-4 bg-primary text-white rounded-xl font-semibold mb-10 flex justify-center items-center gap-2 shrink-0">
-          <BsStars className="size-5" />
-          <span>AI 맞춤 경로 디자인</span>
-        </button>
-
         {/* 3번 영역: 근처 폐의약품 수거함 리스트 */}
-        <div className="flex flex-col  flex-1 gap-4 min-h-0">
+        <div className="flex flex-col mt-5 flex-1 gap-4 min-h-0">
           <div className="font-bold text-lg">근처 폐의약품 수거함</div>
           <div
             className={`flex flex-col flex-1 gap-2 pb-45 no-scrollbar ${sheetState === "expanded" ? "overflow-y-auto" : "overflow-hidden"}`}
           >
             {mockBinInfo.map((bin) => {
-              return <BinCard key={bin.id} info={bin} />;
+              return (
+                <BinCard
+                  key={bin.id}
+                  info={bin}
+                  onClick={() => {
+                    if (bin.id === selectedBinId) setSelectedBinId(null);
+                    else setSelectedBinId(bin.id);
+                  }}
+                  isSelected={selectedBinId === bin.id}
+                />
+              );
             })}
           </div>
         </div>
