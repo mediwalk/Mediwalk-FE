@@ -1,11 +1,12 @@
 // src/pages/Home/GoogleMap.tsx
 import { useCallback, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
 import { TbCurrentLocation } from "react-icons/tb";
 
 const containerStyle = {
   width: "100%",
-  height: "500px",
+  height: "100%",
 };
 
 // 위치를 못 가져왔을 때 보여줄 기본 좌표
@@ -14,7 +15,11 @@ const defaultCenter = {
   lng: 126.9723,
 };
 
-export default function MyGoogleMap() {
+interface MapProps {
+  sheetState: "half" | "collapsed" | "expanded";
+}
+
+export default function MyGoogleMap({ sheetState }: MapProps) {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -66,8 +71,25 @@ export default function MyGoogleMap() {
     }
   }, [map, currentPosition]);
 
+  // 상태에 따른 지도 높이 계산
+  const getMapHeight = () => {
+    switch (sheetState) {
+      case "half":
+        return "55%"; // 바텀시트가 중간일 때: 화면의 55%만 차지
+      case "collapsed":
+        return "100%"; // 바텀시트가 내려갔을 때: 화면 꽉 채움
+      case "expanded":
+        return "55%"; // 바텀시트가 펼쳐졌을 때
+      default:
+        return "55%";
+    }
+  };
+
   return isLoaded ? (
-    <div>
+    <motion.div
+      className="w-full relative"
+      animate={{ height: getMapHeight() }} // 높이 변경 애니메이션
+    >
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={defaultCenter} //  상태값을 중심으로 설정
@@ -106,7 +128,7 @@ export default function MyGoogleMap() {
         />
 
         <button
-          className="absolute z-10 bottom-25 right-4 cursor-pointer bg-white rounded-full p-2 shadow-sm"
+          className={`absolute z-10 right-4 cursor-pointer bg-white rounded-full p-2 shadow-sm ${sheetState === "collapsed" ? "bottom-47" : "bottom-10"}`}
           onClick={handleCurrentLocation}
         >
           <TbCurrentLocation
@@ -114,7 +136,7 @@ export default function MyGoogleMap() {
           />
         </button>
       </GoogleMap>
-    </div>
+    </motion.div>
   ) : (
     <div className="h-87 bg-gray-100 animate-pulse rounded-3xl" />
   );

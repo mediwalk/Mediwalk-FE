@@ -1,5 +1,5 @@
-import { motion, useDragControls, useMotionValue } from "framer-motion";
-import { useState } from "react";
+import { motion, useDragControls, type PanInfo } from "framer-motion";
+import { useEffect, useState } from "react";
 import { BsStars } from "react-icons/bs";
 import BinCard from "./BinCard";
 
@@ -13,7 +13,15 @@ export interface BinInfo {
   reward: number;
 }
 
-export default function BottomSheet() {
+interface BottomSheetProps {
+  sheetState: "half" | "collapsed" | "expanded";
+  setSheetState: (state: "half" | "collapsed" | "expanded") => void;
+}
+
+export default function BottomSheet({
+  sheetState,
+  setSheetState,
+}: BottomSheetProps) {
   const mockBinInfo: BinInfo[] = [
     {
       id: 1,
@@ -71,35 +79,63 @@ export default function BottomSheet() {
     },
   ];
 
-  const [isOpen, setIsOpen] = useState(false);
+  // 화면 높이 계산
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  useEffect(() => {
+    setWindowHeight(window.innerHeight);
+  }, []);
 
-  const CLOSED_Y = 480;
-  const OPEN_Y = 80;
+  // 위치 상수 정의
+  // Header(64px) + Map(55%)를 고려했을 때 바텀시트의 시작 위치
+  const TOP_Y = 80;
+  const MIDDLE_Y = windowHeight * 0.6; // 화면의 60% 지점부터 시작
+  const BOTTOM_Y = windowHeight - 105; // 바닥
 
-  const y = useMotionValue(CLOSED_Y);
   const controls = useDragControls();
+
+  // 현재 상태에 따른 Y값 반환
+  const getTargetY = () => {
+    switch (sheetState) {
+      case "expanded":
+        return TOP_Y;
+      case "half":
+        return MIDDLE_Y;
+      case "collapsed":
+        return BOTTOM_Y;
+      default:
+        return MIDDLE_Y;
+    }
+  };
+
+  // 드래그 종료 시 상태 업데이트
+  const handleDragEnd = (_: any, info: PanInfo) => {
+    const offset = info.offset.y;
+    const velocity = info.velocity.y;
+
+    // 위로 드래그
+    if (offset < -50 || velocity < -500) {
+      if (sheetState === "collapsed") setSheetState("half");
+      else if (sheetState === "half") setSheetState("expanded");
+    }
+    // 아래로 드래그
+    else if (offset > 50 || velocity > 500) {
+      if (sheetState === "expanded") setSheetState("half");
+      else if (sheetState === "half") setSheetState("collapsed");
+    }
+  };
 
   return (
     <motion.div
-      style={{ y }}
-      initial={{ y: CLOSED_Y }} // 바텀시트 초기 위치
-      animate={{ y: isOpen ? OPEN_Y : CLOSED_Y }} // 바텀시트 펼쳐지면 0%위치, 닫히면 60%위치
-      transition={{ type: "spring", damping: 20, stiffness: 100 }}
-      className="fixed flex flex-col bottom-0 left-1/2 -translate-x-1/2 bg-white shadow-sm w-full max-w-md z-40 h-full rounded-t-3xl"
-      drag="y" // 세로 방향 드래그 허용
-      dragListener={isOpen ? false : true} // 바텀시트 전체에 대해서는 드래그 감지 끄기
+      initial={{ y: MIDDLE_Y }}
+      animate={{ y: getTargetY() }} // 부모 상태에 따라 위치 이동
+      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      className="fixed flex flex-col top-0 left-0 right-0 bg-white shadow-[0_-5px_20px_rgba(0,0,0,0.1)] w-full max-w-md mx-auto z-40 h-[100dvh] rounded-t-3xl"
+      drag="y"
       dragControls={controls}
-      dragConstraints={{ top: OPEN_Y, bottom: CLOSED_Y }}
-      dragElastic={0}
-      onDragEnd={(_, info) => {
-        if (info.offset.y < -20) {
-          y.set(OPEN_Y);
-          setIsOpen(true);
-        } else if (info.offset.y > 20) {
-          y.set(CLOSED_Y);
-          setIsOpen(false);
-        }
-      }}
+      dragListener={false}
+      dragConstraints={{ top: TOP_Y, bottom: BOTTOM_Y }}
+      dragElastic={0.1}
+      onDragEnd={handleDragEnd}
     >
       {/* 회색 바 */}
       <div
@@ -121,7 +157,7 @@ export default function BottomSheet() {
         <div className="flex flex-col  flex-1 gap-4 min-h-0">
           <div className="font-bold text-lg">근처 폐의약품 수거함</div>
           <div
-            className={`flex flex-col flex-1 gap-2 pb-45 no-scrollbar ${isOpen ? "overflow-y-auto" : "overflow-hidden"}`}
+            className={`flex flex-col flex-1 gap-2 pb-45 no-scrollbar ${sheetState === "expanded" ? "overflow-y-auto" : "overflow-hidden"}`}
           >
             {mockBinInfo.map((bin) => {
               return <BinCard key={bin.id} info={bin} />;
