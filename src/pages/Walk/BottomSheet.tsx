@@ -110,15 +110,14 @@ export default function BottomSheet({
   // 드래그 종료 시 상태 업데이트
   const handleDragEnd = (_: any, info: PanInfo) => {
     const offset = info.offset.y;
-    const velocity = info.velocity.y;
 
     // 위로 드래그
-    if (offset < -50 || velocity < -500) {
+    if (offset < -50) {
       if (sheetState === "collapsed") setSheetState("half");
       else if (sheetState === "half") setSheetState("expanded");
     }
     // 아래로 드래그
-    else if (offset > 50 || velocity > 500) {
+    else if (offset > 50) {
       if (sheetState === "expanded") setSheetState("half");
       else if (sheetState === "half") setSheetState("collapsed");
     }
@@ -129,7 +128,7 @@ export default function BottomSheet({
       initial={{ y: MIDDLE_Y }}
       animate={{ y: getTargetY() }} // 부모 상태에 따라 위치 이동
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="fixed flex flex-col top-0 left-0 right-0 bg-white shadow-[0_-5px_20px_rgba(0,0,0,0.1)] w-full max-w-md mx-auto z-40 h-[100dvh] rounded-t-3xl"
+      className="fixed flex flex-col top-0 left-0 right-0 bg-white w-full max-w-md mx-auto z-40 h-dvh rounded-t-3xl"
       drag="y"
       dragControls={controls}
       dragListener={false}
