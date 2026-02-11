@@ -25,7 +25,7 @@ export default function MyGoogleMap() {
   const [currentPosition, setCurrentPosition] = useState(defaultCenter);
   const [isTracking, setIsTracking] = useState(true); // 지도 중심이 나를 따라다닐지 여부
 
-  // 💡 실시간 위치 감시 로직
+  // 실시간 위치 감시 로직
   useEffect(() => {
     if (!navigator.geolocation) return;
 
@@ -66,22 +66,20 @@ export default function MyGoogleMap() {
     }
   }, [map, currentPosition]);
 
-  useEffect(() => {
-    if (isLoaded) {
-      handleCurrentLocation();
-    }
-  }, [isLoaded, handleCurrentLocation]);
-
   return isLoaded ? (
     <div>
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={currentPosition} //  상태값을 중심으로 설정
+        center={defaultCenter} //  상태값을 중심으로 설정
         zoom={17}
         options={{
           disableDefaultUI: true,
         }}
-        onLoad={(map) => setMap(map)}
+        onLoad={(map) => {
+          setMap(map);
+          map.panTo(currentPosition);
+        }}
+        onDragStart={() => setIsTracking(false)} // 지도 직접 드래그하면 추적 해제
       >
         {/* 현재 내 위치에 마커 표시 */}
         <MarkerF
@@ -111,7 +109,9 @@ export default function MyGoogleMap() {
           className="absolute z-10 bottom-25 right-4 cursor-pointer bg-white rounded-full p-2 shadow-sm"
           onClick={handleCurrentLocation}
         >
-          <TbCurrentLocation className="size-5" />
+          <TbCurrentLocation
+            className={`size-5 ${isTracking ? "text-primary" : "text-gray-400"}`}
+          />
         </button>
       </GoogleMap>
     </div>
