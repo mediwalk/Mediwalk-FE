@@ -69,7 +69,10 @@ const RouteFilter = () => {
             <PiMapPinFill className="text-primary size-5" />
             <span>나의 목적지</span>
           </div>
-          <div className="flex gap-1 items-center text-[#202123]">
+          <div
+            onClick={() => navigate(`/walk/${binId}`)}
+            className="flex gap-1 items-center text-[#202123] cursor-pointer"
+          >
             <span>강남구 보건소</span>
             <FaAngleRight className="size-4" />
           </div>
