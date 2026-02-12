@@ -1,7 +1,7 @@
 import { motion, useDragControls, type PanInfo } from "framer-motion";
 import { useEffect, useState } from "react";
-import { BsStars } from "react-icons/bs";
 import BinCard from "./BinCard";
+import { useOutletContext, useParams } from "react-router-dom";
 
 export interface BinInfo {
   id: number;
@@ -13,15 +13,7 @@ export interface BinInfo {
   reward: number;
 }
 
-interface BottomSheetProps {
-  sheetState: "half" | "collapsed" | "expanded";
-  setSheetState: (state: "half" | "collapsed" | "expanded") => void;
-}
-
-export default function BottomSheet({
-  sheetState,
-  setSheetState,
-}: BottomSheetProps) {
+export default function BottomSheet() {
   const mockBinInfo: BinInfo[] = [
     {
       id: 1,
@@ -78,6 +70,24 @@ export default function BottomSheet({
       reward: 4000,
     },
   ];
+
+  // 부모(Walk)가 내려준 상태 꺼내기
+  const { sheetState, setSheetState } = useOutletContext<{
+    sheetState: "half" | "collapsed" | "expanded";
+    setSheetState: (s: any) => void;
+  }>();
+
+  const { binId } = useParams();
+  const [selectedBinId, setSelectedBinId] = useState<number | null>(
+    binId ? Number(binId) : null,
+  );
+
+  useEffect(() => {
+    if (binId) {
+      setSelectedBinId(Number(binId));
+      setSheetState("expanded");
+    }
+  }, [binId, setSheetState]);
 
   // 화면 높이 계산
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
@@ -146,20 +156,24 @@ export default function BottomSheet({
 
       {/* 내부 콘텐츠 영역 */}
       <div className="px-6 flex flex-col h-full overflow-hidden">
-        {/* 2번 영역: AI 맞춤 경로 디자인 버튼 */}
-        <button className="w-full py-4 bg-primary text-white rounded-xl font-semibold mb-10 flex justify-center items-center gap-2 shrink-0">
-          <BsStars className="size-5" />
-          <span>AI 맞춤 경로 디자인</span>
-        </button>
-
         {/* 3번 영역: 근처 폐의약품 수거함 리스트 */}
-        <div className="flex flex-col  flex-1 gap-4 min-h-0">
+        <div className="flex flex-col mt-5 flex-1 gap-4 min-h-0">
           <div className="font-bold text-lg">근처 폐의약품 수거함</div>
           <div
             className={`flex flex-col flex-1 gap-2 pb-45 no-scrollbar ${sheetState === "expanded" ? "overflow-y-auto" : "overflow-hidden"}`}
           >
             {mockBinInfo.map((bin) => {
-              return <BinCard key={bin.id} info={bin} />;
+              return (
+                <BinCard
+                  key={bin.id}
+                  info={bin}
+                  onClick={() => {
+                    if (bin.id === selectedBinId) setSelectedBinId(null);
+                    else setSelectedBinId(bin.id);
+                  }}
+                  isSelected={selectedBinId === bin.id}
+                />
+              );
             })}
           </div>
         </div>

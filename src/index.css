@@ -3,7 +3,10 @@
 @theme {
   --color-primary: #4e83ff;
   --color-primary-light: #9dbaff;
-  --color-primary-extralight: #e8ebef;
+  --color-primary-extralight: #f0f4ff;
+
+  --color-cool-neutral-70: #aab1b2;
+  --color-cool-neutral-95: #e9eef0;
 
   --color-background: #f8f9fd;
 }

@@ -5,12 +5,15 @@ import Reward from "./pages/Reward/Reward";
 import Mypage from "./pages/Mypage/Mypage";
 import NavBar from "./components/NavBar";
 import MissionDetail from "./pages/Home/Mission/MissionDetail";
+import RouteFilter from "./pages/Walk/RouteFilter";
+import BottomSheet from "./pages/Walk/BottomSheet";
+import RoutePreview from "./pages/Walk/RoutePreview";
 
 function Layout() {
   const location = useLocation();
 
   // 네비게이션바 숨길 페이지 설정
-  const hideNavBarPaths = ["/mission"];
+  const hideNavBarPaths = ["/mission", "/walk/filter", "/walk/preview"];
   const hideNavBar = hideNavBarPaths.some((path) =>
     location.pathname.startsWith(path),
   );
@@ -23,7 +26,18 @@ function Layout() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/mission/:missionId" element={<MissionDetail />} />
-            <Route path="/walk" element={<Walk />} />
+
+            <Route path="/walk" element={<Walk />}>
+              {/* /walk 진입 시: 기본 리스트 상태 */}
+              <Route index element={<BottomSheet />} />
+              {/* /walk/:binId 진입 시: 특정 수거함 선택 상태 */}
+              <Route path=":binId" element={<BottomSheet />} />
+              {/* /walk/filter/:binId 진입 시: AI 필터 설정 상태 */}
+              <Route path="filter/:binId" element={<RouteFilter />} />
+              {/* /walk/preview/:binId 진입 시: 특정 수거함까지의 경로 */}
+              <Route path="preview/:binId" element={<RoutePreview />} />
+            </Route>
+
             <Route path="/reward" element={<Reward />} />
             <Route path="/mypage" element={<Mypage />} />
           </Routes>
