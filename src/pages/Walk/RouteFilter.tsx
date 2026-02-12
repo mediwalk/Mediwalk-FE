@@ -9,17 +9,20 @@ const RouteFilter = () => {
   const navigate = useNavigate();
   const { binId } = useParams();
 
-  const [activeLevel, setActiveLevel] = useState<string>("적당한");
-  const [slopeLevel, setSlopeLevel] = useState<string>("완만한");
+  const [activeLevel, setActiveLevel] = useState<string | null>(null);
+  const [slopeLevel, setSlopeLevel] = useState<string | null>(null);
 
   const [isRestingPointOn, setIsRestingPoint] = useState(false);
   const [isNatureFriendly, setIsNatureFriendly] = useState(false);
   const [isPedestrianZone, setIsPedestrianZone] = useState(false);
 
+  // 버튼 활성화 여부 판단 (활동량과 경사도가 모두 null이 아닐 때)
+  const isFormValid = activeLevel !== null && slopeLevel !== null;
+
   // 필터 버튼 선택
   const renderFilterButtons = (
     options: string[],
-    current: string,
+    current: string | null,
     setter: (val: string) => void,
   ) => (
     <div className="flex gap-3">
@@ -38,6 +41,12 @@ const RouteFilter = () => {
       ))}
     </div>
   );
+
+  /// 경로 확인 제출 함수
+  const handleSubmit = () => {
+    if (!isFormValid) return; // 활성화되지 않았을 때는 함수 실행 방지
+    navigate(`/walk/preview/${binId}`);
+  };
 
   // 닫힘
   const handleClose = () => {
@@ -131,7 +140,10 @@ const RouteFilter = () => {
         </div>
       </div>
       <div className="px-5.5 fixed bottom-0 pb-12 w-full max-w-md">
-        <button className="w-full bg-primary text-white font-semibold rounded-xl py-4">
+        <button
+          onClick={handleSubmit}
+          className={`w-full font-semibold rounded-xl py-4 ${isFormValid ? "bg-primary text-white" : "bg-cool-neutral-95 text-cool-neutral-70"}`}
+        >
           AI 맞춤 경로 확인하기
         </button>
       </div>
