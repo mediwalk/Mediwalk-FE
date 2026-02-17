@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import type { BinInfo } from "./BottomSheet";
+import type { BinInfo } from "../BottomSheet";
 import { BsStars } from "react-icons/bs";
 
 interface BinCardProps {

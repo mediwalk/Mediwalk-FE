@@ -1,6 +1,6 @@
 import { motion, useDragControls, type PanInfo } from "framer-motion";
 import { useEffect, useState } from "react";
-import BinCard from "./BinCard";
+import BinCard from "./components/BinCard";
 import { useOutletContext, useParams } from "react-router-dom";
 
 export interface BinInfo {

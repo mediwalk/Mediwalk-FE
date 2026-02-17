@@ -1,7 +1,7 @@
 import { PiPillFill } from "react-icons/pi";
 import { FaWalking } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
-import type { MissionInfo } from "./Home";
+import type { MissionInfo } from "../Home";
 import { useNavigate } from "react-router-dom";
 
 interface MissionCardProps {

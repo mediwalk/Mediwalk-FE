@@ -1,6 +1,6 @@
 import { BiBell } from "react-icons/bi";
 import { FaAngleRight } from "react-icons/fa6";
-import MissionCard from "./MissionCard";
+import MissionCard from "./Mission/MissionCard";
 import BinCard from "./BinCard";
 
 export interface MissionInfo {
