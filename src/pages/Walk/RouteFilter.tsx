@@ -12,9 +12,9 @@ const RouteFilter = () => {
   const [activeLevel, setActiveLevel] = useState<string | null>(null);
   const [slopeLevel, setSlopeLevel] = useState<string | null>(null);
 
-  const [isRestingPointOn, setIsRestingPoint] = useState(false);
-  const [isNatureFriendly, setIsNatureFriendly] = useState(false);
-  const [isPedestrianZone, setIsPedestrianZone] = useState(false);
+  const [isRestingPointOn, setIsRestingPoint] = useState<boolean>(false);
+  const [isNatureFriendly, setIsNatureFriendly] = useState<boolean>(false);
+  const [isPedestrianZone, setIsPedestrianZone] = useState<boolean>(false);
 
   // 버튼 활성화 여부 판단 (활동량과 경사도가 모두 null이 아닐 때)
   const isFormValid = activeLevel !== null && slopeLevel !== null;
