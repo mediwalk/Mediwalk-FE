@@ -1,6 +1,13 @@
 import { FaCircleCheck } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const DisposalComplete = () => {
+  const navigate = useNavigate();
+
+  const returnHome = () => {
+    navigate("/");
+  };
+
   return (
     <div className="bg-background inset-0 flex flex-col items-center px-5">
       <div className="flex flex-col gap-5 mt-60">
@@ -34,7 +41,10 @@ const DisposalComplete = () => {
         </div>
       </div>
       <div className="flex gap-2 w-full text-sub1_sb_18 mt-15">
-        <button className="flex-1 py-4 bg-common-white text-primary border border-primary rounded-xl">
+        <button
+          onClick={returnHome}
+          className="flex-1 py-4 bg-common-white text-primary border border-primary rounded-xl"
+        >
           홈 화면으로
         </button>
         <button className="flex-1 py-4 bg-primary text-common-white rounded-xl">
