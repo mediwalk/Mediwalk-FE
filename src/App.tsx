@@ -8,12 +8,18 @@ import MissionDetail from "./pages/Home/Mission/MissionDetail";
 import RouteFilter from "./pages/Walk/RouteFilter";
 import BottomSheet from "./pages/Walk/BottomSheet";
 import RoutePreview from "./pages/Walk/RoutePreview";
+import DisposalComplete from "./pages/Walk/DisposalComplete";
 
 function Layout() {
   const location = useLocation();
 
   // 네비게이션바 숨길 페이지 설정
-  const hideNavBarPaths = ["/mission", "/walk/filter", "/walk/preview"];
+  const hideNavBarPaths = [
+    "/mission",
+    "/walk/filter",
+    "/walk/preview",
+    "/disposal/success",
+  ];
   const hideNavBar = hideNavBarPaths.some((path) =>
     location.pathname.startsWith(path),
   );
@@ -37,6 +43,7 @@ function Layout() {
               {/* /walk/preview/:binId 진입 시: 특정 수거함까지의 경로 */}
               <Route path="preview/:binId" element={<RoutePreview />} />
             </Route>
+            <Route path="/disposal/success" element={<DisposalComplete />} />
 
             <Route path="/reward" element={<Reward />} />
             <Route path="/mypage" element={<Mypage />} />
