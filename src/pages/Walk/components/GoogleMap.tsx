@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { GoogleMap, useJsApiLoader, MarkerF } from "@react-google-maps/api";
 import { TbCurrentLocation } from "react-icons/tb";
+import type { BinLocationData } from "../Walk";
 
 const containerStyle = {
   width: "100%",
@@ -15,11 +16,22 @@ const defaultCenter = {
   lng: 126.9723,
 };
 
+// 부모가 넘겨주는 Props 타입 정의
 interface MapProps {
   sheetState: "half" | "collapsed" | "expanded";
+  bins: BinLocationData[];
+  selectedBinId: number | null;
+  setSelectedBinId: (id: number | null) => void;
+  setSheetState: (state: "half" | "collapsed" | "expanded") => void;
 }
 
-export default function MyGoogleMap({ sheetState }: MapProps) {
+export default function MyGoogleMap({
+  sheetState,
+  bins,
+  selectedBinId,
+  setSelectedBinId,
+  setSheetState,
+}: MapProps) {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -61,6 +73,18 @@ export default function MyGoogleMap({ sheetState }: MapProps) {
     // 컴포넌트 언마운트 시 감시 종료
     return () => navigator.geolocation.clearWatch(watchId);
   }, [isLoaded, map, isTracking]);
+
+  // 바텀시트에서 수거함을 클릭하면 지도의 중심을 그 수거함으로 이동
+  useEffect(() => {
+    if (selectedBinId && map && bins.length > 0) {
+      const selectedBin = bins.find((b) => b.id === selectedBinId);
+      if (selectedBin) {
+        map.panTo({ lat: selectedBin.latitude, lng: selectedBin.longitude });
+        map.setZoom(17);
+        setIsTracking(false); // 수거함 볼 때는 내 위치 추적 잠깐 끄기
+      }
+    }
+  }, [selectedBinId, map, bins]);
 
   // 현재 위치 버튼 클릭 시: 내 위치로 이동 + 다시 추적 활성화
   const handleCurrentLocation = useCallback(() => {
@@ -126,6 +150,31 @@ export default function MyGoogleMap({ sheetState }: MapProps) {
             scale: 8,
           }}
         />
+
+        {/* API로 받아온 수거함 마커들 렌더링 */}
+        {bins.map((bin) => {
+          const isSelected = selectedBinId === bin.id;
+          return (
+            <MarkerF
+              key={bin.id}
+              position={{ lat: bin.latitude, lng: bin.longitude }}
+              onClick={() => {
+                setSelectedBinId(bin.id); // 마커 클릭 시 선택 상태 업데이트
+                setSheetState("half"); // 바텀시트가 다 덮고 있다면 중간으로 내림
+              }}
+              // 선택된 마커는 파란색, 아니면 회색 핀으로 표시
+              icon={{
+                url: isSelected
+                  ? "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%233b82f6' d='M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z'/%3E%3C/svg%3E"
+                  : "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%239ca3af' d='M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z'/%3E%3C/svg%3E",
+                scaledSize: isSelected
+                  ? new google.maps.Size(35, 45)
+                  : new google.maps.Size(30, 40),
+                anchor: new google.maps.Point(15, 40),
+              }}
+            />
+          );
+        })}
 
         <button
           className={`absolute z-10 right-4 cursor-pointer bg-white rounded-full p-2 shadow-sm ${sheetState === "collapsed" ? "bottom-47" : "bottom-10"}`}

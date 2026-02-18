@@ -1,7 +1,28 @@
 import { BiBell } from "react-icons/bi";
 import MyGoogleMap from "./components/GoogleMap";
 import { Outlet, useLocation, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../../api/axios";
+
+export interface BinLocationData {
+  id: number;
+  name: string;
+  address: string;
+  baseRewardAmount: number;
+  latitude: number;
+  longitude: number;
+}
+
+export interface WalkContextType {
+  sheetState: "half" | "collapsed" | "expanded";
+  setSheetState: React.Dispatch<
+    React.SetStateAction<"half" | "collapsed" | "expanded">
+  >;
+  bins: BinLocationData[];
+  loading: boolean;
+  selectedBinId: number | null;
+  setSelectedBinId: React.Dispatch<React.SetStateAction<number | null>>;
+}
 
 const Walk = () => {
   const { binId } = useParams();
@@ -14,6 +35,37 @@ const Walk = () => {
     "half" | "collapsed" | "expanded"
   >(binId ? "expanded" : "half");
 
+  const [bins, setBins] = useState<BinLocationData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedBinId, setSelectedBinId] = useState<number | null>(
+    binId ? Number(binId) : null,
+  );
+
+  // API 호출 - 화면이 켜지면 실행
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // 근처 수거함 가져오기 (현재 내 위치 위도/경도 임시값 넣음)
+        const binRes = await api.get("/collection-locations/nearby", {
+          params: {
+            latitude: 37.806,
+            longitude: 127.059,
+            radiusKm: 2,
+          },
+        });
+        setBins(binRes.data);
+      } catch (error) {
+        console.error("데이터 로딩 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="relative h-dvh">
       {/* 헤더 */}
@@ -25,8 +77,25 @@ const Walk = () => {
           </div>
         </header>
       )}
-      <MyGoogleMap sheetState={sheetState} />
-      <Outlet context={{ sheetState, setSheetState }} />
+      {/* 지도에 데이터와 상태 넘겨주기 */}
+      <MyGoogleMap
+        sheetState={sheetState}
+        bins={bins}
+        selectedBinId={selectedBinId}
+        setSelectedBinId={setSelectedBinId}
+        setSheetState={setSheetState}
+      />
+      {/*  바텀시트에 Context로 데이터 넘겨주기 */}
+      <Outlet
+        context={{
+          sheetState,
+          setSheetState,
+          bins,
+          loading,
+          selectedBinId,
+          setSelectedBinId,
+        }}
+      />
     </div>
   );
 };
