@@ -4,6 +4,7 @@ import MissionCard from "./Mission/MissionCard";
 import BinCard from "./BinCard";
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import { useCurrentLocation } from "../../hooks/useCurrentLocation";
 
 interface UserData {
   id: number;
@@ -46,12 +47,15 @@ const Home = () => {
     },
   ];
 
+  const { myLocation, isLocating } = useCurrentLocation();
+
   const [user, setUser] = useState<UserData | null>(null);
   const [bins, setBins] = useState<BinLocationData[]>([]);
   const [loading, setLoading] = useState(true);
 
   // API 호출 - 화면이 켜지면 실행
   useEffect(() => {
+    if (isLocating || !myLocation) return;
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -60,12 +64,12 @@ const Home = () => {
         const userRes = await api.get("/users/1");
         setUser(userRes.data);
 
-        // 2. 근처 수거함 가져오기 (현재 내 위치 위도/경도 임시값 넣음)
+        // 2. 근처 수거함 가져오기 (현재 내 위치 위도/경도 넣음)
         const binRes = await api.get("/collection-locations/nearby", {
           params: {
-            latitude: 37.806,
-            longitude: 127.059,
-            radiusKm: 2,
+            latitude: myLocation.lat,
+            longitude: myLocation.lng,
+            limit: 3,
           },
         });
         setBins(binRes.data);
@@ -77,7 +81,7 @@ const Home = () => {
     };
 
     fetchData();
-  }, []);
+  }, [myLocation, isLocating]);
 
   return (
     <>
@@ -132,7 +136,7 @@ const Home = () => {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            {bins.slice(0, 3).map((bin) => {
+            {bins.map((bin) => {
               return (
                 <BinCard
                   key={bin.id}

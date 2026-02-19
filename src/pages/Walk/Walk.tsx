@@ -3,6 +3,7 @@ import MyGoogleMap from "./components/GoogleMap";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import { useCurrentLocation } from "../../hooks/useCurrentLocation";
 
 export interface BinLocationData {
   id: number;
@@ -41,8 +42,12 @@ const Walk = () => {
     binId ? Number(binId) : null,
   );
 
+  const { myLocation, isLocating } = useCurrentLocation();
+
   // API 호출 - 화면이 켜지면 실행
   useEffect(() => {
+    if (isLocating || !myLocation) return;
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -50,8 +55,8 @@ const Walk = () => {
         // 근처 수거함 가져오기 (현재 내 위치 위도/경도 임시값 넣음)
         const binRes = await api.get("/collection-locations/nearby", {
           params: {
-            latitude: 37.806,
-            longitude: 127.059,
+            latitude: myLocation.lat,
+            longitude: myLocation.lng,
             radiusKm: 2,
           },
         });
@@ -64,7 +69,7 @@ const Walk = () => {
     };
 
     fetchData();
-  }, []);
+  }, [myLocation, isLocating]);
 
   return (
     <div className="relative h-dvh">

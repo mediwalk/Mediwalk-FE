@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 
 export const useCurrentLocation = () => {
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
-    null,
-  );
+  const [myLocation, setLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [isLocating, setIsLocating] = useState(true); // GPS 찾는 중인지 여부
 
   useEffect(() => {
@@ -33,5 +34,5 @@ export const useCurrentLocation = () => {
     );
   }, []);
 
-  return { location, isLocating };
+  return { myLocation, isLocating };
 };

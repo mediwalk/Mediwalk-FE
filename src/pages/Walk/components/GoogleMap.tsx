@@ -154,23 +154,34 @@ export default function MyGoogleMap({
         {/* API로 받아온 수거함 마커들 렌더링 */}
         {bins.map((bin) => {
           const isSelected = selectedBinId === bin.id;
+
+          // 크기 정의
+          const size = isSelected
+            ? new google.maps.Size(40, 53)
+            : new google.maps.Size(30, 40);
+
+          // 앵커 정의 (크기에 맞춰 정확한 밑부분 중앙 계산)
+          const anchor = isSelected
+            ? new google.maps.Point(20, 53)
+            : new google.maps.Point(15, 39);
+
           return (
             <MarkerF
               key={bin.id}
               position={{ lat: bin.latitude, lng: bin.longitude }}
               onClick={() => {
-                setSelectedBinId(bin.id); // 마커 클릭 시 선택 상태 업데이트
-                setSheetState("half"); // 바텀시트가 다 덮고 있다면 중간으로 내림
+                setSelectedBinId(bin.id);
+                setSheetState("half");
               }}
               // 선택된 마커는 파란색, 아니면 회색 핀으로 표시
               icon={{
                 url: isSelected
                   ? "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%233b82f6' d='M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z'/%3E%3C/svg%3E"
                   : "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='%239ca3af' d='M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z'/%3E%3C/svg%3E",
-                scaledSize: isSelected
-                  ? new google.maps.Size(35, 45)
-                  : new google.maps.Size(30, 40),
-                anchor: new google.maps.Point(15, 40),
+
+                // 위에서 정의한 변수 사용
+                scaledSize: size,
+                anchor: anchor,
               }}
             />
           );
