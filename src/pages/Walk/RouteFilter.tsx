@@ -6,6 +6,7 @@ import ToggleButton from "../../components/ToggleButton";
 import { useEffect, useState } from "react";
 import type { BinLocationData } from "./Walk";
 import api from "../../api/axios";
+import { mapActivityLevel, mapSlopeLevel } from "../../utils/filter";
 
 const RouteFilter = () => {
   const navigate = useNavigate();
@@ -43,6 +44,24 @@ const RouteFilter = () => {
     fetchData();
   }, []);
 
+  const handleSubmit = () => {
+    if (!isFormValid) return;
+
+    navigate(`/walk/preview/${binId}`, {
+      state: {
+        destinationId: Number(binId),
+        isMission: false, // 일반 모드라는 표시
+        filters: {
+          activityLevel: mapActivityLevel(activeLevel),
+          slopeLevel: mapSlopeLevel(slopeLevel),
+          includeRestPoints: isRestingPointOn,
+          natureFriendly: isNatureFriendly,
+          pedestrianOnly: isPedestrianZone,
+        },
+      },
+    });
+  };
+
   // 필터 버튼 선택
   const renderFilterButtons = (
     options: string[],
@@ -65,12 +84,6 @@ const RouteFilter = () => {
       ))}
     </div>
   );
-
-  /// 경로 확인 제출 함수
-  const handleSubmit = () => {
-    if (!isFormValid) return; // 활성화되지 않았을 때는 함수 실행 방지
-    navigate(`/walk/preview/${binId}`);
-  };
 
   // 닫힘
   const handleClose = () => {
