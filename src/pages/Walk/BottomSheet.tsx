@@ -102,7 +102,7 @@ export default function BottomSheet() {
                 수거함을 찾고 있어요...
               </div>
             ) : (
-              bins.map((bin) => (
+              bins?.map((bin) => (
                 <BinCard
                   key={bin.id}
                   info={bin}

@@ -27,10 +27,11 @@ export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
         </div>
       </div>
       <div className="text-xs ">
-        <span className="text-primary font-medium">{200}m</span>
+        <span className="text-primary font-medium">{info.distanceMeters}m</span>
         <span className="text-gray-500">
           {" "}
-          • 도보 {10}분 • {350}보
+          {/*• 도보 {info.walkingDistanceMeters}분*/} • {info.estimatedSteps}
+          걸음
         </span>
       </div>
       {isSelected && (

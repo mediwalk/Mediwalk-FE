@@ -144,7 +144,7 @@ const Home = () => {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            {bins.map((bin) => {
+            {bins?.map((bin) => {
               return (
                 <BinCard
                   key={bin.id}

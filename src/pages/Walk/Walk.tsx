@@ -12,6 +12,9 @@ export interface BinLocationData {
   baseRewardAmount: number;
   latitude: number;
   longitude: number;
+  distanceMeters: number;
+  walkingDistanceMeters: number;
+  estimatedSteps: number;
 }
 
 export interface WalkContextType {
