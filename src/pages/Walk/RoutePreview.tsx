@@ -259,8 +259,8 @@ const RoutePreview = () => {
         >
           <div className="bg-white rounded-full px-5 py-3 flex items-center justify-between shadow-md shadow-[#4A4E56]/6">
             <div className="flex gap-3 items-center">
-              <span className="text-primary font-semibold">목적지</span>
-              <span className="font-semibold">공릉1동 주민센터</span>
+              <span className="text-primary text-sub3_sb_16">목적지</span>
+              <span className="text-body1_m_16">공릉1동 주민센터</span>
             </div>
             <button onClick={() => setIsModalOpen(!isModalOpen)}>
               <IoClose className="size-6 text-[#6C727C]" />
@@ -287,7 +287,7 @@ const RoutePreview = () => {
             onPointerDown={(e) => controls.start(e)}
             className="flex justify-center py-4 cursor-grab active:cursor-grabbing touch-none flex-none"
           >
-            <div className="w-15 h-1.5 bg-gray-300 rounded-full" />
+            <div className="w-15 h-1.5 bg-[#C3C7CE] rounded-full" />
           </div>
 
           {/* 내부 레이아웃 */}
@@ -295,13 +295,13 @@ const RoutePreview = () => {
             {/* 헤더 */}
             <div className="px-8 pb-2 flex-none">
               <div className="mb-5 mt-3 flex flex-col gap-2">
-                <h2 className="text-xl font-bold leading-tight mb-2">
+                <h2 className="text-title1_sb_20 leading-tight mb-2">
                   지구를 지키는
                   <br />
                   운동을 시작해볼까요?
                 </h2>
-                <p className="text-xs text-[#7A8396]">
-                  <span className="text-primary">
+                <p className="text-[#40444B] text-caption3_r_13">
+                  <span className="text-primary text-caption1_m_13">
                     총 {routeData?.totalDistanceMeters}m{" "}
                   </span>
                   • 평균 경사도 {slopeMap[routeData?.averageSlope]} •{" "}
@@ -328,7 +328,7 @@ const RoutePreview = () => {
                       )}
                     </div>
                     <div className="pb-8">
-                      <div className="flex items-center gap-1 mb-1.5 font-bold text-[#6C727C] text-caption1_m_13">
+                      <div className="flex items-center gap-1 mb-1.5 text-[#6C727C] text-caption1_m_13">
                         <span>
                           <PiMapPinFill className="size-4 text-primary" />
                         </span>
@@ -348,7 +348,7 @@ const RoutePreview = () => {
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-6 pb-8 pt-4 bg-white z-50 pointer-events-auto">
           <button
             onClick={handleAuthenticate}
-            className="w-full py-4 bg-primary rounded-xl text-white font-semibold active:scale-99 transition-transform"
+            className="w-full py-4 bg-primary rounded-xl text-white text-sub3_sb_16 active:scale-99 transition-transform"
           >
             인증하기
           </button>

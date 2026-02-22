@@ -17,18 +17,20 @@ export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
     >
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-0.5">
-          <p className="font-semibold ">{info.name}</p>
-          <p className="text-xs text-gray-500">{info.address}</p>
+          <p className="text-sub3_sb_16 text-[#31353B]">{info.name}</p>
+          <p className="text-caption3_r_13 text-[#6C727C]">{info.address}</p>
         </div>
         <div
-          className={`font-medium text-sm px-3 py-1.5 rounded-md ${isSelected ? "text-white bg-primary" : "text-primary bg-[#F3F7FF]"}`}
+          className={`text-sub4_sb_14 px-3 py-1.5 rounded-md ${isSelected ? "text-white bg-primary" : "text-primary bg-[#F3F7FF]"}`}
         >
           + {info.baseRewardAmount}원
         </div>
       </div>
       <div className="text-xs ">
-        <span className="text-primary font-medium">{info.distanceMeters}m</span>
-        <span className="text-gray-500">
+        <span className="text-primary text-caption1_m_13">
+          {info.distanceMeters}m
+        </span>
+        <span className="text-caption3_r_13 text-[#6C727C]">
           {" "}
           {/*• 도보 {info.walkingDistanceMeters}분*/} • {info.estimatedSteps}
           걸음
@@ -37,7 +39,7 @@ export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
       {isSelected && (
         <button
           onClick={() => navigate(`/walk/filter/${info.id}`)}
-          className="w-full py-3 mt-1 text-sm font-semibold bg-primary text-white rounded-lg flex justify-center items-center gap-2"
+          className="w-full py-3 mt-1 text-sub4_sb_14 bg-primary text-white rounded-lg flex justify-center items-center gap-2"
         >
           <BsStars className="size-4" />
           <span>AI 맞춤 경로 디자인</span>
