@@ -1,20 +1,226 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, useDragControls, type PanInfo } from "framer-motion";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useOutletContext,
+  useParams,
+  useLocation,
+} from "react-router-dom";
 import { IoClose } from "react-icons/io5";
+import { PiMapPinFill } from "react-icons/pi";
 import ConfirmModal from "../../components/ConfirmModal";
+import api from "../../api/axios";
+import ErrorModal from "../../components/ErrorModal";
+
+// 백엔드 영어 데이터를 한글로 변환
+const slopeMap: Record<string, string> = {
+  GENTLE: "완만함",
+  MODERATE: "적당함",
+  STEEP: "가파름",
+};
+const activityMap: Record<string, string> = {
+  MODERATE: "적당한",
+  ACTIVE: "활발한",
+  MAXIMUM: "최대의",
+};
 
 const RoutePreview = () => {
   const { binId } = useParams();
   const navigate = useNavigate();
-  const { setSheetState, sheetState } = useOutletContext<any>();
+
+  const { state } = useLocation(); // 앞 페이지에서 넘긴 데이터 받기
+
+  const {
+    setSheetState,
+    sheetState,
+    setRoutePath,
+    setRoutePolyline,
+    myLocation,
+    setSelectedBinId,
+  } = useOutletContext<any>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
 
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  // AI 경로 결과 저장할 상태
+  const [routeData, setRouteData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 프리뷰 화면이 열리면 목적지(binId)를 선택된 상태로 지정
+  useEffect(() => {
+    if (binId) {
+      setSelectedBinId(Number(binId));
+    }
+  }, [binId, setSelectedBinId]);
+
+  // API 호출 - 화면 켜지고 위치 파악되면 실행
+  useEffect(() => {
+    // 위치 정보가 없거나 state로 넘어온 값이 없으면 튕겨내기
+    if (!myLocation || !state) return;
+
+    const generateRoute = async () => {
+      try {
+        setIsLoading(true);
+
+        /* // api 요청 body
+        const requestBody = {
+          userId: 1, // 현재 로그인한 유저 아이디 (임시 1)
+          currentLatitude: myLocation.lat,
+          currentLongitude: myLocation.lng,
+          destinationIds: [state.destinationId],
+          filter: state.filters,
+        };
+
+        const res = await api.post("/routes/generate", requestBody);
+
+        console.log("AI 경로 생성 성공!", res.data);
+        setRouteData(res.data); // 성공한 데이터 저장 */
+
+        // 내 위치 -> 목적지로 가는 가짜 좌표 배열 만들기!
+        const mockPath = [
+          { lat: myLocation.lat, lng: myLocation.lng }, // 출발지 (내 위치)
+          { lat: 37.62573454494245, lng: 127.07735834999576 }, // 가짜 중간길 1
+          { lat: 37.625828, lng: 127.074786 }, // 가짜 중간길 2
+          { lat: 37.624828, lng: 127.073786 }, // 도착지 (공릉1동 주민센터 좌표)
+        ];
+
+        // 임시 가짜 데이터 (Mock)
+        const mockResponse = {
+          id: 105,
+          userId: 1,
+          userDailyMissionId: 12,
+          destinationId: 3,
+          startLatitude: 37.629,
+          startLongitude: 127.075,
+          totalDistanceMeters: 2500,
+          estimatedWalkTimeMinutes: 40,
+          estimatedSteps: 3500,
+          averageSlope: "GENTLE",
+          activityLevel: "MODERATE",
+          routePolyline: "_p~iF~ps|U_ulLnnqC_mqNvxq",
+          greenSpaceRatio: 0.8,
+          crosswalkCount: 3,
+          isPedestrianOnly: true,
+          isNatureFriendly: true,
+          hasRestPoints: true,
+          restPoints: [
+            {
+              id: 1001,
+              routeId: 105,
+              name: "용산공원 입구 벤치",
+              type: "REST_BENCH",
+              latitude: 37.632,
+              longitude: 127.0765,
+              order: 1,
+              distanceFromPrevious: 800,
+              instruction: "800m 앞 공원 벤치에서 잠시 쉬어가세요.",
+            },
+            {
+              id: 1002,
+              routeId: 105,
+              name: "이태원 광장 쉼터",
+              type: "PARK",
+              latitude: 37.6355,
+              longitude: 127.078,
+              order: 2,
+              distanceFromPrevious: 1200,
+              instruction: "목적지 도착 전 마지막 휴식 포인트입니다.",
+            },
+            {
+              id: 1003,
+              routeId: 105,
+              name: "공릉1동 주민센터",
+              type: "DESTINATION",
+              latitude: 37.638,
+              longitude: 127.0795,
+              order: 3,
+              distanceFromPrevious: 500,
+              instruction: "목적지에 도착했습니다! 운동 완료!",
+            },
+          ],
+          generatedAt: "2026-02-20T20:00:00Z",
+          completedAt: null,
+          createdAt: "2026-02-20T20:00:00Z",
+          updatedAt: "2026-02-20T20:00:00Z",
+        };
+        setRouteData(mockResponse);
+        //setRoutePolyline(mockResponse.routePolyline); // 받아온 암호화된 경로 문자열을 지도 컴포넌트로 전달
+        setRoutePath(mockPath);
+      } catch (error) {
+        console.error("경로 생성 실패:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    generateRoute();
+  }, [myLocation, state, setRoutePolyline, setRoutePath]);
+
+  const controls = useDragControls();
+
+  // 인증하기 버튼 클릭 시 실행될 함수
+  const handleAuthenticate = async () => {
+    try {
+      let finalReward = 0; // 얻은 리워드
+      if (state.isMission) {
+        // 미션에서 넘어온 경우: 미션 완료 API 호출
+        await api.post(`/user-daily-missions/${state.missionId}/complete`, {
+          earnedReward: state.earnedReward || 3000, // (임시) 원래는 이전 페이지에서 넘어온 보상 금액을 넣어야 함
+          currentLatitude: 37.618839703254395,
+          currentLongitude: 127.07549661397934,
+        });
+        finalReward = state.earnedReward || 3000;
+      } else {
+        // 일반 수거함에서 넘어온 경우: 이벤트 생성 API 호출
+        await api.post("/events", {
+          userId: 1,
+          eventType: "MEDICINE_COLLECTION",
+          title: state.name,
+          rewardAmount: 100,
+          eventDateTime: new Date().toISOString(),
+          collectionLocationId: state.destinationId,
+          routeId: routeData?.id,
+          //currentLatitude: 37.624828,
+          //currentLongitude: 127.073786,
+          currentLatitude: myLocation?.lat,
+          currentLongitude: myLocation?.lng,
+        });
+        finalReward = 100; // 일반 수거 보상 (임시 100)
+      }
+
+      // 완료 후 성공 화면으로 이동
+      navigate("/complete", {
+        replace: true, // 뒤로가기 했을 때 이 프리뷰 페이지로 다시 못 오게 막음
+        state: {
+          reward: finalReward,
+          distance: routeData?.totalDistanceMeters || 0,
+        },
+      });
+    } catch (error) {
+      console.error("인증 처리 실패:", error);
+      setIsErrorModalOpen(true);
+    }
+  };
+
+  // 경로 생성 로딩 중일 때 보여줄 화면
+  if (isLoading) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center bg-white/90 backdrop-blur-sm z-50">
+        <p className="font-semibold text-lg text-primary animate-pulse">
+          AI가 최적의 경로를 디자인하고 있습니다...
+        </p>
+      </div>
+    );
+  }
 
   // 모달 제어 함수
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const closeErrorModal = () => {
+    setIsErrorModalOpen(false);
   };
 
   const confirmModal = () => {
@@ -25,8 +231,6 @@ const RoutePreview = () => {
   const TOP_Y = 110;
   const MIDDLE_Y = windowHeight * 0.52;
   const BOTTOM_Y = windowHeight - 140;
-
-  const controls = useDragControls();
 
   const getTargetY = () => {
     if (sheetState === "expanded") return TOP_Y;
@@ -56,7 +260,7 @@ const RoutePreview = () => {
           <div className="bg-white rounded-full px-5 py-3 flex items-center justify-between shadow-md shadow-[#4A4E56]/6">
             <div className="flex gap-3 items-center">
               <span className="text-primary font-semibold">목적지</span>
-              <span className="font-semibold">서울역 메디 약국</span>
+              <span className="font-semibold">공릉1동 주민센터</span>
             </div>
             <button onClick={() => setIsModalOpen(!isModalOpen)}>
               <IoClose className="size-6 text-[#6C727C]" />
@@ -97,105 +301,55 @@ const RoutePreview = () => {
                   운동을 시작해볼까요?
                 </h2>
                 <p className="text-xs text-[#7A8396]">
-                  <span className="text-primary">총 2.5km </span>• 평균 경사도
-                  완만함 • 적당한 활동량
+                  <span className="text-primary">
+                    총 {routeData?.totalDistanceMeters}m{" "}
+                  </span>
+                  • 평균 경사도 {slopeMap[routeData?.averageSlope]} •{" "}
+                  {activityMap[routeData?.activityLevel]} 활동량
                 </p>
               </div>
             </div>
 
             {/* 휴식 포인트 */}
             <div className="flex-1 overflow-y-auto px-8 min-h-0 no-scrollbar pb-20">
-              <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
-                <div className="flex flex-col items-center pt-1">
-                  <div className="size-3 rounded-full border-2 border-gray-300 bg-white z-10" />
-                  <div className="w-0.5 h-full border-l-2 border-dashed border-gray-200 -mt-1" />
-                </div>
-                <div className="pb-8">
-                  <div className="flex items-center gap-2 mb-1.5 font-bold text-gray-700">
-                    용산공원 입구 벤치
+              {/* map() 함수를 이용해서 배열 길이만큼 반복해서 그림 */}
+              {routeData?.restPoints?.map((point: any, index: number) => {
+                const isLast = index === routeData.restPoints.length - 1; // 마지막 목적지인지 확인
+                return (
+                  <div
+                    key={point.id}
+                    className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1"
+                  >
+                    <div className="flex flex-col items-center pt-1">
+                      <div className="size-3 rounded-full border-2 border-gray-300 bg-white z-10" />
+                      {/* 마지막 줄이면 점선을 안 그림 */}
+                      {!isLast && (
+                        <div className="w-0.5 h-full border-l-2 border-dashed border-gray-200 -mt-1" />
+                      )}
+                    </div>
+                    <div className="pb-8">
+                      <div className="flex items-center gap-1 mb-1.5 font-bold text-[#6C727C] text-caption1_m_13">
+                        <span>
+                          <PiMapPinFill className="size-4 text-primary" />
+                        </span>
+                        {point.name}
+                      </div>
+                      <p className="text-body1_m_16 text-[#202123] ">
+                        {point.instruction}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-gray-600">
-                    300m 앞 공원 벤치에서 잠시 쉬어가세요
-                  </p>
-                </div>
-
-                <div className="flex flex-col items-center pt-1">
-                  <div className="size-3 rounded-full border-2 border-gray-300 bg-white z-10" />
-                  <div className="w-0.5 h-full border-l-2 border-dashed border-gray-200 -mt-1" />
-                </div>
-                <div className="pb-8">
-                  <div className="flex items-center gap-2 mb-1.5 font-bold text-gray-700">
-                    용산공원 입구 벤치
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    300m 앞 공원 벤치에서 잠시 쉬어가세요
-                  </p>
-                </div>
-
-                <div className="flex flex-col items-center pt-1">
-                  <div className="size-3 rounded-full border-2 border-gray-300 bg-white z-10" />
-                  <div className="w-0.5 h-full border-l-2 border-dashed border-gray-200 -mt-1" />
-                </div>
-                <div className="pb-8">
-                  <div className="flex items-center gap-2 mb-1.5 font-bold text-gray-700">
-                    용산공원 입구 벤치
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    300m 앞 공원 벤치에서 잠시 쉬어가세요
-                  </p>
-                </div>
-                <div className="flex flex-col items-center pt-1">
-                  <div className="size-3 rounded-full border-2 border-gray-300 bg-white z-10" />
-                  <div className="w-0.5 h-full border-l-2 border-dashed border-gray-200 -mt-1" />
-                </div>
-                <div className="pb-8">
-                  <div className="flex items-center gap-2 mb-1.5 font-bold text-gray-700">
-                    용산공원 입구 벤치
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    300m 앞 공원 벤치에서 잠시 쉬어가세요
-                  </p>
-                </div>
-                <div className="flex flex-col items-center pt-1">
-                  <div className="size-3 rounded-full border-2 border-gray-300 bg-white z-10" />
-                  <div className="w-0.5 h-full border-l-2 border-dashed border-gray-200 -mt-1" />
-                </div>
-                <div className="pb-8">
-                  <div className="flex items-center gap-2 mb-1.5 font-bold text-gray-700">
-                    용산공원 입구 벤치
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    300m 앞 공원 벤치에서 잠시 쉬어가세요
-                  </p>
-                </div>
-                <div className="flex flex-col items-center pt-1">
-                  <div className="size-3 rounded-full border-2 border-gray-300 bg-white z-10" />
-                  <div className="w-0.5 h-full border-l-2 border-dashed border-gray-200 -mt-1" />
-                </div>
-                <div className="pb-8">
-                  <div className="flex items-center gap-2 mb-1.5 font-bold text-gray-700">
-                    용산공원 입구 벤치
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    300m 앞 공원 벤치에서 잠시 쉬어가세요
-                  </p>
-                </div>
-
-                <div className="flex flex-col items-center pt-1">
-                  <div className="size-3 rounded-full border-2 border-gray-300 bg-white z-10" />
-                </div>
-                <div className="pb-8">
-                  <div className="flex items-center gap-2 mb-1.5 font-bold text-gray-700">
-                    도착지
-                  </div>
-                  <p className="text-sm text-gray-600">운동 완료!</p>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
         </motion.div>
+        {/* 인증하기 버튼 */}
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-6 pb-8 pt-4 bg-white z-50 pointer-events-auto">
-          <button className="w-full py-4 bg-primary rounded-xl text-white font-semibold active:scale-99 transition-transform">
+          <button
+            onClick={handleAuthenticate}
+            className="w-full py-4 bg-primary rounded-xl text-white font-semibold active:scale-99 transition-transform"
+          >
             인증하기
           </button>
         </div>
@@ -206,6 +360,13 @@ const RoutePreview = () => {
           detail="목적지를 재설정하여 AI 경로 추천을 받을 수 있어요."
           onClose={closeModal}
           onConfirm={confirmModal}
+        />
+      )}
+      {isErrorModalOpen && (
+        <ErrorModal
+          title="인증에 실패했습니다"
+          detail="목적지 근처인지 다시 확인해 주세요"
+          onClose={closeErrorModal}
         />
       )}
     </>

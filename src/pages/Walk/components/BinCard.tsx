@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import type { BinInfo } from "../BottomSheet";
 import { BsStars } from "react-icons/bs";
+import type { BinLocationData } from "../Walk";
 
 interface BinCardProps {
-  info: BinInfo;
+  info: BinLocationData;
   isSelected: boolean;
   onClick: () => void;
 }
 
 export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
-  const navivgate = useNavigate();
+  const navigate = useNavigate();
   return (
     <div
       onClick={onClick}
@@ -17,25 +17,26 @@ export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
     >
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-0.5">
-          <p className="font-semibold ">{info.title}</p>
-          <p className="text-xs text-gray-500">{info.detail}</p>
+          <p className="font-semibold ">{info.name}</p>
+          <p className="text-xs text-gray-500">{info.address}</p>
         </div>
         <div
           className={`font-medium text-sm px-3 py-1.5 rounded-md ${isSelected ? "text-white bg-primary" : "text-primary bg-[#F3F7FF]"}`}
         >
-          + {info.reward}원
+          + {info.baseRewardAmount}원
         </div>
       </div>
       <div className="text-xs ">
-        <span className="text-primary font-medium">{info.distance}m</span>
+        <span className="text-primary font-medium">{info.distanceMeters}m</span>
         <span className="text-gray-500">
           {" "}
-          • 도보 {info.time}분 • {info.step}보
+          {/*• 도보 {info.walkingDistanceMeters}분*/} • {info.estimatedSteps}
+          걸음
         </span>
       </div>
       {isSelected && (
         <button
-          onClick={() => navivgate(`/walk/filter/${info.id}`)}
+          onClick={() => navigate(`/walk/filter/${info.id}`)}
           className="w-full py-3 mt-1 text-sm font-semibold bg-primary text-white rounded-lg flex justify-center items-center gap-2"
         >
           <BsStars className="size-4" />

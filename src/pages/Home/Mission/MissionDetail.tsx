@@ -1,13 +1,19 @@
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import ToggleButton from "../../../components/ToggleButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillClockCircle } from "react-icons/ai";
 import { PiMapPinFill } from "react-icons/pi";
-// import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import type { MissionsData } from "../Home";
+import api from "../../../api/axios";
+import { mapActivityLevel, mapSlopeLevel } from "../../../utils/filter";
 
 const MissionDetail = () => {
-  // const { missionId } = useParams();
+  const { missionId } = useParams();
+
+  const [loading, setLoading] = useState(true);
+  const [mission, setMission] = useState<MissionsData | null>(null);
 
   const navigate = useNavigate();
 
@@ -17,6 +23,44 @@ const MissionDetail = () => {
   const [isRestingPointOn, setIsRestingPoint] = useState(false);
   const [isNatureFriendly, setIsNatureFriendly] = useState(false);
   const [isPedestrianZone, setIsPedestrianZone] = useState(false);
+
+  // API 호출 - 화면이 켜지면 실행
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // 미션 정보 가져오기
+        const missionRes = await api.get(`/user-daily-missions/${missionId}`);
+        setMission(missionRes.data);
+      } catch (error) {
+        console.error("데이터 로딩 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // 미션 시작 버튼 클릭 함수
+  const handleStartMission = () => {
+    navigate(`/walk/preview/${mission?.collectionLocationId}`, {
+      state: {
+        destinationId: mission?.collectionLocationId,
+        isMission: true, // 미션에서 넘어왔다는 표시
+        missionId: missionId,
+        earnedReward: mission?.earnedReward,
+        filters: {
+          activityLevel: mapActivityLevel(activeLevel),
+          slopeLevel: mapSlopeLevel(slopeLevel),
+          includeRestPoints: isRestingPointOn,
+          natureFriendly: isNatureFriendly,
+          pedestrianOnly: isPedestrianZone,
+        },
+      },
+    });
+  };
 
   // 필터 버튼 선택
   const renderFilterButtons = (
@@ -54,11 +98,9 @@ const MissionDetail = () => {
       <div className="flex flex-col gap-5 py-3 pb-5 overflow-hidden">
         {/* 미션 제목 */}
         <section className="flex flex-col gap-1 shrink-0">
-          <h4 className="text-primary font-medium">
-            오늘의 폐의약품 수거 미션
-          </h4>
+          <h4 className="text-primary font-medium">{mission?.missionTitle}</h4>
           <h1 className="text-2xl font-semibold">
-            옆 동네 보건소에 폐의약품 처리하기
+            {mission?.missionDescription}
           </h1>
         </section>
 
@@ -74,7 +116,7 @@ const MissionDetail = () => {
                   <PiMapPinFill className="size-4 text-gray-500" />
                   <span className="font-medium">목적지</span>
                 </div>
-                <p>강남구 보건소</p>
+                <p>공릉보건지소</p>
               </div>
               {/* 거리 영역 */}
               <div className="flex justify-between ">
@@ -83,15 +125,19 @@ const MissionDetail = () => {
                   <span className=" font-medium">거리</span>
                 </div>
                 <div className="flex items-center gap-2 justify-end">
-                  <span className="font-medium">1,500m</span>
-                  <span className="text-gray-500 ">도보 약 40분</span>
+                  <span className="font-medium">
+                    {mission?.distanceMeters || 700}m
+                  </span>
+                  <span className="text-gray-500 ">
+                    도보 약 {mission?.walkingDistanceMeters || 20}분
+                  </span>
                 </div>
               </div>
             </div>
             {/* 보상 영역 */}
             <div className="bg-blue-50 flex justify-between px-4 py-3 rounded-lg font-medium">
               <p>폐의약품 수거 보상</p>
-              <p className="text-primary">3000 원</p>
+              <p className="text-primary">{mission?.earnedReward || 3000} 원</p>
             </div>
           </div>
           {/* 필터 영역 */}
@@ -163,7 +209,10 @@ const MissionDetail = () => {
       {/* 하단 고정 버튼 영역 */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-6 pb-8 bg-background">
         <div>
-          <button className="w-full py-4 bg-primary rounded-xl text-white font-semibold active:scale-99 transition-transform">
+          <button
+            onClick={handleStartMission}
+            className="w-full py-4 bg-primary rounded-xl text-white font-semibold active:scale-99 transition-transform"
+          >
             미션 시작하기
           </button>
         </div>

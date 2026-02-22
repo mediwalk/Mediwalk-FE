@@ -3,11 +3,17 @@ import { IoClose } from "react-icons/io5";
 import { PiMapPinFill } from "react-icons/pi";
 import { FaAngleRight } from "react-icons/fa6";
 import ToggleButton from "../../components/ToggleButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { BinLocationData } from "./Walk";
+import api from "../../api/axios";
+import { mapActivityLevel, mapSlopeLevel } from "../../utils/filter";
 
 const RouteFilter = () => {
   const navigate = useNavigate();
   const { binId } = useParams();
+  const [loading, setLoading] = useState(true);
+
+  const [bin, setBin] = useState<BinLocationData | null>(null);
 
   const [activeLevel, setActiveLevel] = useState<string | null>(null);
   const [slopeLevel, setSlopeLevel] = useState<string | null>(null);
@@ -18,6 +24,44 @@ const RouteFilter = () => {
 
   // 버튼 활성화 여부 판단 (활동량과 경사도가 모두 null이 아닐 때)
   const isFormValid = activeLevel !== null && slopeLevel !== null;
+
+  // API 호출 - 화면이 켜지면 실행
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // 수거함 정보 가져오기
+        const binRes = await api.get(`/collection-locations/${binId}`);
+        setBin(binRes.data);
+      } catch (error) {
+        console.error("데이터 로딩 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSubmit = () => {
+    if (!isFormValid) return;
+
+    navigate(`/walk/preview/${binId}`, {
+      state: {
+        destinationId: Number(binId),
+        name: bin?.name,
+        isMission: false, // 일반 모드라는 표시
+        filters: {
+          activityLevel: mapActivityLevel(activeLevel),
+          slopeLevel: mapSlopeLevel(slopeLevel),
+          includeRestPoints: isRestingPointOn,
+          natureFriendly: isNatureFriendly,
+          pedestrianOnly: isPedestrianZone,
+        },
+      },
+    });
+  };
 
   // 필터 버튼 선택
   const renderFilterButtons = (
@@ -41,12 +85,6 @@ const RouteFilter = () => {
       ))}
     </div>
   );
-
-  /// 경로 확인 제출 함수
-  const handleSubmit = () => {
-    if (!isFormValid) return; // 활성화되지 않았을 때는 함수 실행 방지
-    navigate(`/walk/preview/${binId}`);
-  };
 
   // 닫힘
   const handleClose = () => {
@@ -73,7 +111,7 @@ const RouteFilter = () => {
             onClick={() => navigate(`/walk/${binId}`)}
             className="flex gap-1 items-center text-[#202123] cursor-pointer"
           >
-            <span>강남구 보건소</span>
+            <span>{bin?.name}</span>
             <FaAngleRight className="size-4" />
           </div>
         </div>

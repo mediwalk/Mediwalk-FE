@@ -18,7 +18,7 @@ function Layout() {
     "/mission",
     "/walk/filter",
     "/walk/preview",
-    "/disposal/success",
+    "/complete",
   ];
   const hideNavBar = hideNavBarPaths.some((path) =>
     location.pathname.startsWith(path),
@@ -43,7 +43,7 @@ function Layout() {
               {/* /walk/preview/:binId 진입 시: 특정 수거함까지의 경로 */}
               <Route path="preview/:binId" element={<RoutePreview />} />
             </Route>
-            <Route path="/disposal/success" element={<DisposalComplete />} />
+            <Route path="/complete" element={<DisposalComplete />} />
 
             <Route path="/reward" element={<Reward />} />
             <Route path="/mypage" element={<Mypage />} />

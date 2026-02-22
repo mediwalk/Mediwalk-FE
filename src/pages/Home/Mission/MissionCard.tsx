@@ -1,11 +1,11 @@
 import { PiPillFill } from "react-icons/pi";
 import { FaWalking } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
-import type { MissionInfo } from "../Home";
+import type { MissionsData } from "../Home";
 import { useNavigate } from "react-router-dom";
 
 interface MissionCardProps {
-  info: MissionInfo;
+  info: MissionsData;
 }
 
 const MissionCard = ({ info }: MissionCardProps) => {
@@ -14,10 +14,10 @@ const MissionCard = ({ info }: MissionCardProps) => {
   return (
     <div
       onClick={() => navigate(`/mission/${info.id}`)}
-      className={`flex flex-col flex-none px-4 gap-3 rounded-2xl shadow-sm h-35 w-70 justify-center ${info.type == "medicine" ? "bg-primary text-white" : "bg-white"}`}
+      className={`flex flex-col flex-none px-4 gap-3 rounded-2xl shadow-sm h-35 w-70 justify-center ${info.missionId == 1 ? "bg-primary text-white" : "bg-white"}`}
     >
       <div>
-        {info.type == "medicine" ? (
+        {info.missionId == 1 ? (
           <PiPillFill className="size-8" />
         ) : (
           <FaWalking className="size-8" />
@@ -25,12 +25,12 @@ const MissionCard = ({ info }: MissionCardProps) => {
       </div>
       <div className="flex flex-col gap-1">
         <div className="flex justify-between items-center">
-          <span className=" font-semibold text-lg">{info.title}</span>
+          <span className=" font-semibold text-lg">{info.missionTitle}</span>
           <span className="cursor-pointer">
             <FaAngleRight className="size-6" />
           </span>
         </div>
-        <div className="font-medium text-sm">{info.detail}</div>
+        <div className="font-medium text-sm">{info.missionDescription}</div>
       </div>
     </div>
   );
