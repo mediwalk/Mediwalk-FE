@@ -62,6 +62,7 @@ const RoutePreview = () => {
     const generateRoute = async () => {
       try {
         setIsLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
         /* // api 요청 body
         const requestBody = {
@@ -80,8 +81,19 @@ const RoutePreview = () => {
         // 내 위치 -> 목적지로 가는 가짜 좌표 배열 만들기!
         const mockPath = [
           { lat: myLocation.lat, lng: myLocation.lng }, // 출발지 (내 위치)
-          { lat: 37.62573454494245, lng: 127.07735834999576 }, // 가짜 중간길 1
-          { lat: 37.625828, lng: 127.074786 }, // 가짜 중간길 2
+          { lat: 37.625294853394145, lng: 127.0781739504518 }, // 가짜 중간길 1
+          { lat: 37.6253017812431, lng: 127.07791624762802 }, // 가짜 중간길 2
+          { lat: 37.62475891276535, lng: 127.0779524964447 },
+          { lat: 37.624795140824325, lng: 127.07766648994472 },
+          { lat: 37.624756850774546, lng: 127.0776636345529 },
+          { lat: 37.62464004956438, lng: 127.07716508916506 },
+          { lat: 37.62424932620634, lng: 127.07529843747463 },
+          { lat: 37.623797078519246, lng: 127.0745135389438 },
+          { lat: 37.62403372851429, lng: 127.07429005262443 },
+          { lat: 37.624155491649596, lng: 127.07408344251196 },
+          { lat: 37.62409248123931, lng: 127.07398992618778 },
+          { lat: 37.62406101059809, lng: 127.07388794544731 },
+          { lat: 37.62475942903467, lng: 127.07364225637096 },
           { lat: 37.624828, lng: 127.073786 }, // 도착지 (공릉1동 주민센터 좌표)
         ];
 
@@ -93,7 +105,7 @@ const RoutePreview = () => {
           destinationId: 3,
           startLatitude: 37.629,
           startLongitude: 127.075,
-          totalDistanceMeters: 2500,
+          totalDistanceMeters: 618,
           estimatedWalkTimeMinutes: 40,
           estimatedSteps: 3500,
           averageSlope: "GENTLE",
