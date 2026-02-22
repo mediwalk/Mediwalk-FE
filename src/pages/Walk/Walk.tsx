@@ -92,7 +92,7 @@ const Walk = () => {
       {/* 헤더 */}
       {!isPreview && (
         <header className="flex h-16 justify-between items-center px-6">
-          <div className="text-2xl font-bold">mediwalk</div>
+          <div className="text-poppins-bold">mediwalk</div>
           <div className="cursor-pointer">
             <BiBell className="size-6" />
           </div>

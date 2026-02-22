@@ -91,7 +91,7 @@ const Home = () => {
       <div className="flex flex-col gap-3">
         {/* 헤더 */}
         <header className="sticky top-0 z-50 bg-background flex h-16 justify-between items-center px-6">
-          <div className="text-2xl font-bold">mediwalk</div>
+          <div className="text-poppins-bold">mediwalk</div>
           <div className="cursor-pointer">
             <BiBell className="size-6" />
           </div>

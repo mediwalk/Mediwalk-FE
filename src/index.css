@@ -25,6 +25,22 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/Poppins-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/Poppins-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* 색상 테마 설정 */
 @theme {
   --color-primary: #4e83ff;
@@ -70,7 +86,7 @@
   *,
   *::before,
   *::after {
-    font-family: "Pretendard", sans-serif !important;
+    font-family: inherit;
   }
 
   html,
@@ -194,5 +210,13 @@
     line-height: 1.4;
     letter-spacing: -0.04em;
     font-weight: 400;
+  }
+
+  .text-poppins-bold {
+    font-family: "Poppins", sans-serif !important;
+    font-size: 24px;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-weight: 700;
   }
 }
