@@ -8,7 +8,7 @@ const ToggleButton = ({ isOn, onToggle }: ToggleProps) => {
     <button
       onClick={onToggle}
       className={`relative w-10 h-6 flex items-center rounded-full px-1 transition-colors duration-300 ${
-        isOn ? "bg-primary" : "bg-gray-300"
+        isOn ? "bg-primary" : "bg-neutral-90"
       }`}
     >
       {/* 토글 내부의 하얀 원 */}

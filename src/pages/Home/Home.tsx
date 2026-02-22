@@ -99,21 +99,21 @@ const Home = () => {
         {/* 인사말, 리워드 */}
         <section className="px-6 pt-4 pb-6 flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <h1 className="text-2xl font-medium">안녕하세요, {user?.name}님</h1>
-            <p className="text-gray-400 text-sm font-medium">
+            <h1 className="text-head1_sb_24">안녕하세요, {user?.name}님</h1>
+            <p className="text-body4_r_14 text-[#6B7078]">
               오늘도 건강하게 폐의약품 수거해볼까요?
             </p>
           </div>
 
           <div className="h-22 w-full flex p-4 items-center justify-between rounded-2xl border shadow-sm bg-white border-primary">
-            <div className="font-semibold whitespace-pre-wrap">
+            <div className="text-sub3_sb_16 text-[#292C32] whitespace-pre-wrap">
               {"이번 달 폐의약품\n수거 리워드"}
             </div>
             <div className="flex flex-col items-end gap-0.5">
-              <div className="text-lg font-bold text-primary">
+              <div className="text-title1_sb_20 text-primary">
                 {user?.totalAccumulatedReward.toLocaleString()} 원
               </div>
-              <div className="text-xs font-semibold text-gray-500">
+              <div className="text-caption4_r_12 text-[#292C32]">
                 지난 달 대비 +{user?.rewardIncreaseRateComparedToLastMonth || 0}
                 %
               </div>
@@ -122,7 +122,7 @@ const Home = () => {
         </section>
         {/* 오늘의 미션 */}
         <section>
-          <div className="font-semibold text-xl px-6 mt-3">오늘의 미션</div>
+          <div className="text-title1_sb_20 px-6 mt-3">오늘의 미션</div>
           <div className="flex flex-nowrap no-scrollbar overflow-x-auto gap-4 py-3">
             <div className="px-1"></div>
             {missions.map((mission) => {
@@ -134,10 +134,10 @@ const Home = () => {
         {/* 근처 폐의약품 수거함 */}
         <section className="flex flex-col p-6 gap-3">
           <div className="flex justify-between">
-            <div className="font-semibold text-xl">근처 폐의약품 수거함</div>
+            <div className="text-title1_sb_20">근처 폐의약품 수거함</div>
             <div
               onClick={() => navigate("/walk")}
-              className="flex items-center gap-0.5 text-sm text-gray-500 cursor-pointer"
+              className="flex items-center gap-0.5 text-sm text-body2_m_14 text-[#6B7078] cursor-pointer"
             >
               전체보기 <FaAngleRight />
             </div>

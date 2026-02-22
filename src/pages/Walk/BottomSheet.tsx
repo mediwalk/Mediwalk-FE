@@ -93,7 +93,15 @@ export default function BottomSheet() {
       <div className="px-6 flex flex-col h-full overflow-hidden">
         {/* 3번 영역: 근처 폐의약품 수거함 리스트 */}
         <div className="flex flex-col mt-5 flex-1 gap-4 min-h-0">
-          <div className="font-bold text-lg">근처 폐의약품 수거함</div>
+          <div className="flex flex-col gap-2">
+            <div className="text-title1_sb_20">
+              폐의약품 수거함{" "}
+              <span className="text-primary">{bins.length}</span>건
+            </div>
+            <div className="text-body4_r_14 text-neutral-40">
+              현 위치 기준 3km 이내의 수거함만 노출됩니다
+            </div>
+          </div>
           <div
             className={`flex flex-col flex-1 gap-2 pb-45 no-scrollbar ${sheetState === "expanded" ? "overflow-y-auto" : "overflow-hidden"}`}
           >

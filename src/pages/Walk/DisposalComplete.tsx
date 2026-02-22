@@ -26,7 +26,7 @@ const DisposalComplete = () => {
             3000원 적립 완료
           </div>
           <div className="text-caption1-m-13 text-cool-neutral-30">
-            누적 잔액 50850원
+            누적 잔액 50,850원
           </div>
         </div>
         <div className="flex flex-col p-4 bg-common-white shadow-md shadow-[#4a4e56]/4 rounded-xl gap-4.5 text-body3_r_16">

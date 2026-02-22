@@ -25,12 +25,12 @@ const MissionCard = ({ info }: MissionCardProps) => {
       </div>
       <div className="flex flex-col gap-1">
         <div className="flex justify-between items-center">
-          <span className=" font-semibold text-lg">{info.missionTitle}</span>
+          <span className="text-sub1_sb_18">{info.missionTitle}</span>
           <span className="cursor-pointer">
             <FaAngleRight className="size-6" />
           </span>
         </div>
-        <div className="font-medium text-sm">{info.missionDescription}</div>
+        <div className="text-body4_r_14">{info.missionDescription}</div>
       </div>
     </div>
   );

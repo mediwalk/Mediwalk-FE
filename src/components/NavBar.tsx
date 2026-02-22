@@ -9,7 +9,7 @@ const NavBar = () => {
   const getLink = (path: string) => {
     return location.pathname === path
       ? "text-primary color-primary"
-      : "text-gray color-gray";
+      : "text-[#7A8396] color-[#7A8396]";
   };
 
   return (
