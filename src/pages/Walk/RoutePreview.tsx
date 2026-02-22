@@ -40,6 +40,7 @@ const RoutePreview = () => {
   } = useOutletContext<any>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
@@ -209,8 +210,18 @@ const RoutePreview = () => {
           distance: routeData?.totalDistanceMeters || 0,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("인증 처리 실패:", error);
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        const formattedMsg = error.response.data.message.replace(".", ".\n");
+        setErrorMessage(formattedMsg);
+      } else {
+        setErrorMessage("서버와 통신 중 문제가 발생했습니다.");
+      }
       setIsErrorModalOpen(true);
     }
   };
@@ -377,7 +388,7 @@ const RoutePreview = () => {
       {isErrorModalOpen && (
         <ErrorModal
           title="인증에 실패했습니다"
-          detail="목적지 근처인지 다시 확인해 주세요"
+          detail={errorMessage}
           onClose={closeErrorModal}
         />
       )}
