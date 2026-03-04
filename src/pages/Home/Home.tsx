@@ -1,5 +1,5 @@
-import { BiBell } from "react-icons/bi";
-import { FaAngleRight } from "react-icons/fa6";
+import NotiIcon from "../../assets/icons/noti_line.svg?react";
+import ArrowIcon from "../../assets/icons/arrow2_right.svg?react";
 import MissionCard from "./Mission/MissionCard";
 import BinCard from "./BinCard";
 import { useEffect, useState } from "react";
@@ -88,78 +88,85 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col">
         {/* 헤더 */}
-        <header className="sticky top-0 z-50 bg-background flex h-16 justify-between items-center px-6">
+        <header className="sticky top-0 z-50 bg-background flex h-15 justify-between items-baseline-last px-5 pb-3">
           <div className="text-poppins-bold">mediwalk</div>
           <div className="cursor-pointer">
-            <BiBell className="size-6" />
+            <NotiIcon />
           </div>
         </header>
-        {/* 인사말, 리워드 */}
-        <section className="px-6 pt-4 pb-6 flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <h1 className="text-head1_sb_24">안녕하세요, {user?.name}님</h1>
-            <p className="text-body4_r_14 text-[#6B7078]">
-              오늘도 건강하게 폐의약품 수거해볼까요?
-            </p>
-          </div>
 
-          <div className="h-22 w-full flex p-4 items-center justify-between rounded-2xl border shadow-sm bg-white border-primary">
-            <div className="text-sub3_sb_16 text-[#292C32] whitespace-pre-wrap">
-              {"이번 달 폐의약품\n수거 리워드"}
+        <div className="flex flex-col py-5">
+          {/* 인사말, 리워드 */}
+          <section className="px-5 flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <h1 className="text-head1_sb_24">안녕하세요, {user?.name}님</h1>
+              <p className="text-body4_r_14 text-[#6B7078]">
+                오늘도 건강하게 폐의약품 수거해볼까요?
+              </p>
             </div>
-            <div className="flex flex-col items-end gap-0.5">
-              <div className="text-title1_sb_20 text-primary">
-                {user?.totalAccumulatedReward.toLocaleString()} 원
+
+            <div className="h-22 w-full flex p-4 items-center justify-between rounded-2xl border bg-white border-primary shadow-card">
+              <div className="text-sub3_sb_16 text-[#292C32] whitespace-pre-wrap">
+                {"이번 달 폐의약품\n수거 리워드"}
               </div>
-              <div className="text-caption4_r_12 text-[#292C32]">
-                지난 달 대비 +{user?.rewardIncreaseRateComparedToLastMonth || 0}
-                %
+              <div className="flex flex-col items-end gap-0.5">
+                <div className="text-title1_sb_20 text-primary">
+                  {user?.totalAccumulatedReward.toLocaleString()} 원
+                </div>
+                <div className="text-caption4_r_12 text-[#292C32]">
+                  지난 달 대비{" "}
+                  {user?.rewardIncreaseRateComparedToLastMonth || 0}%
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-        {/* 오늘의 미션 */}
-        <section>
-          <div className="text-title1_sb_20 px-6 mt-3">오늘의 미션</div>
-          <div className="flex flex-nowrap no-scrollbar overflow-x-auto gap-4 py-3">
-            <div className="px-1"></div>
-            {missions.map((mission) => {
-              return <MissionCard key={mission.id} info={mission} />;
-            })}
-            <div className="px-1"></div>
-          </div>
-        </section>
-        {/* 근처 폐의약품 수거함 */}
-        <section className="flex flex-col p-6 gap-3">
-          <div className="flex justify-between">
-            <div className="text-title1_sb_20">근처 폐의약품 수거함</div>
-            <div
-              onClick={() => navigate("/walk")}
-              className="flex items-center gap-0.5 text-sm text-body2_m_14 text-[#6B7078] cursor-pointer"
-            >
-              전체보기 <FaAngleRight />
+          </section>
+          {/* 오늘의 미션 */}
+          <section>
+            <div className="text-title1_sb_20 px-5 mt-7 mb-2">오늘의 미션</div>
+            <div className="flex flex-nowrap no-scrollbar overflow-x-auto gap-2 pb-3">
+              <div className="px-1.5"></div>
+              {missions.map((mission) => {
+                return <MissionCard key={mission.id} info={mission} />;
+              })}
+              <div className="px-1.5"></div>
             </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            {bins?.map((bin) => {
-              return (
-                <BinCard
-                  key={bin.id}
-                  info={{
-                    id: bin.id,
-                    title: bin.name,
-                    detail: bin.address,
-                    distance: 500,
-                    reward: bin.baseRewardAmount,
-                  }}
-                  onClick={() => navigate(`/walk/${bin.id}`)}
-                />
-              );
-            })}
-          </div>
-        </section>
+            <div className="flex gap-1.5 pb-3 justify-center mb-5">
+              <span className="bg-primary rounded-full h-1.5 w-1.5"></span>
+              <span className="bg-neutral-90 rounded-full h-1.5 w-1.5"></span>
+            </div>
+          </section>
+          {/* 근처 폐의약품 수거함 */}
+          <section className="flex flex-col p-5 gap-3">
+            <div className="flex justify-between">
+              <div className="text-title1_sb_20">근처 폐의약품 수거함</div>
+              <div
+                onClick={() => navigate("/walk")}
+                className="flex items-center gap-0.5 text-sm text-body2_m_14 text-[#6B7078] cursor-pointer"
+              >
+                전체보기 <ArrowIcon className="text-[#6B7078] w-4 h-4" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              {bins?.map((bin) => {
+                return (
+                  <BinCard
+                    key={bin.id}
+                    info={{
+                      id: bin.id,
+                      title: bin.name,
+                      detail: bin.address,
+                      distance: 500,
+                      reward: bin.baseRewardAmount,
+                    }}
+                    onClick={() => navigate(`/walk/${bin.id}`)}
+                  />
+                );
+              })}
+            </div>
+          </section>
+        </div>
       </div>
     </>
   );

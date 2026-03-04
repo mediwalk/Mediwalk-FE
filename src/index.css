@@ -79,6 +79,9 @@
   --color-cool-neutral-99: #f2f6f7;
 
   --color-background: #f8f9fd;
+  --color-background-common: #ffffff;
+
+  --shadow-card: 0 4px 8px 0 #4a4e560f;
 }
 
 /* 전역 스타일 */

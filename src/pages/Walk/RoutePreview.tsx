@@ -121,24 +121,24 @@ const RoutePreview = () => {
             {
               id: 1001,
               routeId: 105,
-              name: "용산공원 입구 벤치",
+              name: "해오라기 어린이공원",
               type: "REST_BENCH",
               latitude: 37.632,
               longitude: 127.0765,
               order: 1,
               distanceFromPrevious: 800,
-              instruction: "800m 앞 공원 벤치에서 잠시 쉬어가세요.",
+              instruction: "해오라기 어린이공원 벤치에서 잠시 쉬어가세요.",
             },
             {
               id: 1002,
               routeId: 105,
-              name: "이태원 광장 쉼터",
+              name: "GS25 공릉타운점",
               type: "PARK",
               latitude: 37.6355,
               longitude: 127.078,
               order: 2,
               distanceFromPrevious: 1200,
-              instruction: "목적지 도착 전 마지막 휴식 포인트입니다.",
+              instruction: "당뇨 관리에 좋은 저당식품들을 구경해보세요.",
             },
             {
               id: 1003,
@@ -194,10 +194,10 @@ const RoutePreview = () => {
           eventDateTime: new Date().toISOString(),
           collectionLocationId: state.destinationId,
           routeId: routeData?.id,
-          //currentLatitude: 37.624828,
-          //currentLongitude: 127.073786,
-          currentLatitude: myLocation?.lat,
-          currentLongitude: myLocation?.lng,
+          currentLatitude: 37.624828,
+          currentLongitude: 127.073786,
+          //currentLatitude: myLocation?.lat,
+          //currentLongitude: myLocation?.lng,
         });
         finalReward = 100; // 일반 수거 보상 (임시 100)
       }

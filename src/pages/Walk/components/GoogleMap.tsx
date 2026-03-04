@@ -66,8 +66,8 @@ export default function MyGoogleMap({
     const watchId = navigator.geolocation.watchPosition(
       (position) => {
         const newPos = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
+          lat: 37.62476618466441,
+          lng: 127.07364509499423,
         };
 
         // 1. 마커 위치 업데이트 (마커가 지도를 따라 움직임)
