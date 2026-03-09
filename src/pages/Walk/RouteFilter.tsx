@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { IoClose } from "react-icons/io5";
-import { PiMapPinFill } from "react-icons/pi";
-import { FaAngleRight } from "react-icons/fa6";
+import CloseIcon from "../../assets/icons/delete_line.svg?react";
+import LocationIcon from "../../assets/icons/location_fill.svg?react";
+import ArrowIcon from "../../assets/icons/arrow2_right.svg?react";
 import ToggleButton from "../../components/ToggleButton";
 import { useEffect, useState } from "react";
 import type { BinLocationData } from "./Walk";
@@ -69,15 +69,15 @@ const RouteFilter = () => {
     current: string | null,
     setter: (val: string) => void,
   ) => (
-    <div className="flex gap-3">
+    <div className="flex gap-1">
       {options.map((option) => (
         <button
           key={option}
           onClick={() => setter(option)}
-          className={`px-5 py-2 rounded-lg text-body2_m_14 text-[#41464E] transition-colors duration-200 ${
+          className={`px-4 py-2 rounded-md text-body2_m_14 text-[#41464E] transition-colors duration-200 ${
             current === option
               ? "bg-cool-neutral-30 text-white"
-              : "bg-white text-gray-600 border border-neutral-70"
+              : "bg-white text-gray-600 ring-1 ring-inset ring-cool-neutral-70"
           }`}
         >
           {option}
@@ -93,36 +93,37 @@ const RouteFilter = () => {
 
   return (
     // 부모의 지도 위에 덮이는 고정 레이아웃
-    <div className="fixed inset-x-0 bottom-0 top-20 bg-white max-w-md mx-auto z-50 rounded-t-3xl flex flex-col overflow-hidden">
-      <div className="px-5.5 mt-9 mb-3 flex justify-between items-center">
+    <div className="fixed inset-x-0 px-5 bottom-0 top-20 bg-white max-w-md mx-auto z-50 rounded-t-3xl flex flex-col overflow-hidden">
+      <div className="mt-8 mb-5 flex justify-between items-center">
         <h2 className="text-title1_sb_20">AI 맞춤 경로 디자인</h2>
-        <button onClick={handleClose} className="p-1">
-          <IoClose className="size-8 text-[#52575E]" />
+        <button onClick={handleClose}>
+          <CloseIcon className="text-[#52575E] w-6 h-6" />
         </button>
       </div>
 
-      <div className="flex justify-center items-center px-5.5 py-2 mb-4">
-        <div className="w-full px-4.5 py-3 flex justify-between items-center bg-[#F3F7FF] border border-primary rounded-full">
-          <div className="flex gap-1.5 items-center">
-            <PiMapPinFill className="text-primary size-5" />
+      <div className="flex justify-center items-center mb-5">
+        <div className="w-full pl-3 pr-4 py-3 flex justify-between items-center bg-[#F3F7FF] border border-primary rounded-full">
+          <div className="flex gap-1 items-center">
+            <LocationIcon className="text-primary w-5 h-5" />
             <span className="text-sub3_sb_16 text-[#202123]">나의 목적지</span>
           </div>
           <div
             onClick={() => navigate(`/walk/${binId}`)}
-            className="flex gap-1 items-center text-body1_m_16 text-[#202123] cursor-pointer"
+            className="flex items-center text-body1_m_16 text-[#202123] cursor-pointer"
           >
             <span>{bin?.name}</span>
-            <FaAngleRight className="size-4" />
+            <ArrowIcon className="text-[#202123] w-5 h-5" />
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 px-5.5 py-5">
+      {/* 필터 영역 */}
+      <div className="flex flex-col gap-4">
         {/* 건강 맞춤형 필터 */}
-        <div className="flex flex-col gap-4 mb-4">
+        <div className="flex flex-col gap-4 py-3.5">
           <h2 className="text-sub1_sb_18">건강 맞춤형 필터</h2>
-          <div className="flex flex-col gap-4 mb-5">
-            <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               <h5 className="text-body2_m_14 text-[#202123]">활동량</h5>
               {renderFilterButtons(
                 ["적당한", "활발한", "최대의"],
@@ -130,7 +131,7 @@ const RouteFilter = () => {
                 setActiveLevel,
               )}
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <h5 className="text-body2_m_14 text-[#202123]">경사도</h5>
               {renderFilterButtons(
                 ["완만한", "적당한", "가파른"],
@@ -138,7 +139,7 @@ const RouteFilter = () => {
                 setSlopeLevel,
               )}
             </div>
-            <div className="flex justify-between items-center mt-2">
+            <div className="flex justify-between items-center py-1">
               <p className="text-body2_m_14 text-[#202123]">휴식 포인트 배치</p>
               <ToggleButton
                 isOn={isRestingPointOn}
@@ -148,11 +149,11 @@ const RouteFilter = () => {
           </div>
         </div>
         {/* 환경 맞춤형 필터 */}
-        <div className="flex flex-col gap-4 py-3">
+        <div className="flex flex-col gap-4 py-3.5">
           <h2 className="text-sub1_sb_18">환경 맞춤형 필터</h2>
           <div className="flex flex-col gap-5">
             {/* 자연 친화 */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center py-1">
               <div>
                 <p className="text-body2_m_14 text-[#202123]">자연 친화</p>
                 <p className="text-caption3_r_13 text-[#4E545D]">
@@ -165,7 +166,7 @@ const RouteFilter = () => {
               />
             </div>
             {/* 보행자 전용 */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center py-1">
               <div>
                 <p className="text-body2_m_14 text-[#202123]">보행자 전용</p>
                 <p className="text-caption3_r_13 text-[#4E545D]">
@@ -180,10 +181,11 @@ const RouteFilter = () => {
           </div>
         </div>
       </div>
-      <div className="px-5.5 fixed bottom-0 pb-12 w-full max-w-md">
+
+      <div className="fixed inset-x-0 mx-auto bottom-0 pt-7 pb-10 px-5 w-full max-w-md">
         <button
           onClick={handleSubmit}
-          className={`w-full text-sub3_sb_16 rounded-xl py-4 ${isFormValid ? "bg-primary text-white" : "bg-cool-neutral-95 text-cool-neutral-70"}`}
+          className={`w-full text-sub3_sb_16 rounded-lg py-4 ${isFormValid ? "bg-primary text-white" : "bg-cool-neutral-95 text-cool-neutral-70"}`}
         >
           AI 맞춤 경로 확인하기
         </button>
