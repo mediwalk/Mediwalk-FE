@@ -77,7 +77,7 @@ const RouteFilter = () => {
           className={`px-4 py-2 rounded-md text-body2_m_14 text-[#41464E] transition-colors duration-200 ${
             current === option
               ? "bg-cool-neutral-30 text-white"
-              : "bg-white text-gray-600 ring-1 ring-inset ring-cool-neutral-70"
+              : "bg-white ring-1 ring-inset ring-cool-neutral-70"
           }`}
         >
           {option}

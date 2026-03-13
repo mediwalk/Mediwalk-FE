@@ -13,7 +13,7 @@ const MissionCard = ({ info }: MissionCardProps) => {
 
   return (
     <div
-      //onClick={() => navigate(`/mission/${info.id}`)}
+      onClick={() => navigate(`/mission/${info.id}`)}
       className={`flex flex-col flex-none px-3.5 gap-3 rounded-2xl h-32 w-62 justify-center ${info.missionId == 1 ? "bg-primary text-white" : "bg-white shadow-card"}`}
     >
       <div className="pl-1">

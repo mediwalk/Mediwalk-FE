@@ -1,9 +1,9 @@
-import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import ToggleButton from "../../../components/ToggleButton";
 import { useEffect, useState } from "react";
-import { AiFillClockCircle } from "react-icons/ai";
-import { PiMapPinFill } from "react-icons/pi";
+import ArrowIcon from "../../../assets/icons/arrow1_left.svg?react";
+import LocationIcon from "../../../assets/icons/location_fill.svg?react";
+import ClockIcon from "../../../assets/icons/time_fill.svg?react";
 import { useParams } from "react-router-dom";
 import type { MissionsData } from "../Home";
 import api from "../../../api/axios";
@@ -72,15 +72,15 @@ const MissionDetail = () => {
     current: string | null,
     setter: (val: string) => void,
   ) => (
-    <div className="flex gap-3">
+    <div className="flex gap-1.5">
       {options.map((option) => (
         <button
           key={option}
           onClick={() => setter(option)}
-          className={`px-5 py-2 rounded-lg text-body2_m_14 text-[#41464E] transition-colors duration-200 ${
+          className={`px-4 py-2 rounded-md text-body2_m_14 text-[#41464E] transition-colors duration-200 ${
             current === option
               ? "bg-cool-neutral-30 text-white"
-              : "bg-white text-gray-600 border border-neutral-70"
+              : "bg-white ring-1 ring-inset ring-cool-neutral-70"
           }`}
         >
           {option}
@@ -90,16 +90,14 @@ const MissionDetail = () => {
   );
 
   return (
-    <div className="px-6 h-dvh flex flex-col overflow-hidden">
+    <div className="px-5 h-dvh flex flex-col overflow-hidden">
       {/* 헤더 */}
-      <header className="flex h-16 items-center shrink-0">
-        <div className="cursor-pointer">
-          <IoIosArrowBack className="size-9" onClick={() => navigate("/")} />
-        </div>
+      <header className="pt-6 pb-3 items-baseline shrink-0">
+        <ArrowIcon className="w-6 h-6" onClick={() => navigate("/")} />
       </header>
 
       {/* 메인 영역 */}
-      <div className="flex flex-col gap-5 py-3 pb-5 overflow-hidden">
+      <div className="flex flex-col gap-5 pt-3 pb-5 overflow-hidden">
         {/* 미션 제목 */}
         <section className="flex flex-col gap-1 shrink-0">
           <h4 className="text-primary text-caption1_m_13">
@@ -109,15 +107,15 @@ const MissionDetail = () => {
         </section>
 
         {/* 미션 내용 */}
-        <section className="flex flex-col flex-1 gap-3 overflow-hidden pb-20 no-scrollbar">
+        <section className="flex flex-col flex-1 gap-3 overflow-hidden no-scrollbar">
           {/* 목적지, 거리, 보상 박스 */}
-          <div className="flex flex-col gap-5 p-5 bg-white rounded-2xl shadow-md shadow-gray-100">
+          <div className="flex flex-col gap-5 p-4 bg-white rounded-xl shadow-card">
             {/* 목적지, 거리 */}
             <div className="flex flex-col gap-3">
               {/* 목적지 영역 */}
               <div className="flex justify-between">
-                <div className="flex items-center gap-1.5">
-                  <PiMapPinFill className="size-4 text-cool-neutral-60" />
+                <div className="flex items-center gap-1">
+                  <LocationIcon className="w-4 h-4 text-cool-neutral-60" />
                   <span className="text-body1_m_16 text-cool-neutral-20">
                     목적지
                   </span>
@@ -128,13 +126,13 @@ const MissionDetail = () => {
               </div>
               {/* 거리 영역 */}
               <div className="flex justify-between ">
-                <div className="flex items-center gap-1.5">
-                  <AiFillClockCircle className="size-4 text-cool-neutral-60" />
+                <div className="flex items-center gap-1">
+                  <ClockIcon className="w-4 h-4 text-cool-neutral-60" />
                   <span className="text-body1_m_16 text-cool-neutral-20">
                     거리
                   </span>
                 </div>
-                <div className="flex items-center gap-2 justify-end text-body1_m_16">
+                <div className="flex items-center gap-1 justify-end text-body1_m_16">
                   <span className=" text-common-black">
                     {mission?.distanceMeters || 700}m
                   </span>
@@ -148,17 +146,17 @@ const MissionDetail = () => {
             <div className="bg-primary-extralight flex justify-between px-4 py-3 rounded-lg">
               <p className="text-body1_m_16">폐의약품 수거 보상</p>
               <p className="text-primary text-sub3_sb_16">
-                {mission?.earnedReward || 3000} 원
+                {(mission?.earnedReward || 3000).toLocaleString()} 원
               </p>
             </div>
           </div>
           {/* 필터 영역 */}
-          <div className="flex flex-col gap-5 p-5 bg-white rounded-2xl shadow-md shadow-gray-100 overflow-y-auto no-scrollbar">
+          <div className="flex flex-col gap-5 px-4 py-2 bg-white rounded-t-xl shadow-card overflow-y-auto no-scrollbar">
             {/* 건강 맞춤형 필터 */}
-            <div className="flex flex-col gap-4 mb-4">
+            <div className="flex flex-col gap-4 py-3.5">
               <h2 className="text-sub1_sb_18">건강 맞춤형 필터</h2>
-              <div className="flex flex-col gap-4 mb-5">
-                <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
                   <h5 className="text-body2_m_14 text-[#202123]">활동량</h5>
                   {renderFilterButtons(
                     ["적당한", "활발한", "최대의"],
@@ -166,7 +164,7 @@ const MissionDetail = () => {
                     setActiveLevel,
                   )}
                 </div>
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-2">
                   <h5 className="text-body2_m_14 text-[#202123]">경사도</h5>
                   {renderFilterButtons(
                     ["완만한", "적당한", "가파른"],
@@ -174,7 +172,7 @@ const MissionDetail = () => {
                     setSlopeLevel,
                   )}
                 </div>
-                <div className="flex justify-between items-center mt-2">
+                <div className="flex justify-between items-center py-1">
                   <p className="text-body2_m_14 text-[#202123]">
                     휴식 포인트 배치
                   </p>
@@ -186,11 +184,11 @@ const MissionDetail = () => {
               </div>
             </div>
             {/* 환경 맞춤형 필터 */}
-            <div className="flex flex-col gap-4 py-3">
+            <div className="flex flex-col gap-4 pt-3.5 pb-20">
               <h2 className="text-sub1_sb_18">환경 맞춤형 필터</h2>
               <div className="flex flex-col gap-5">
                 {/* 자연 친화 */}
-                <div className="flex justify-between items-center">
+                <div className="flex py-1 justify-between items-center">
                   <div>
                     <p className="text-body2_m_14 text-[#202123]">자연 친화</p>
                     <p className="text-caption3_r_13 text-[#4E545D]">
@@ -203,7 +201,7 @@ const MissionDetail = () => {
                   />
                 </div>
                 {/* 보행자 전용 */}
-                <div className="flex justify-between items-center">
+                <div className="flex py-1 justify-between items-center">
                   <div>
                     <p className="text-body2_m_14 text-[#202123]">
                       보행자 전용
@@ -223,15 +221,13 @@ const MissionDetail = () => {
         </section>
       </div>
       {/* 하단 고정 버튼 영역 */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-6 pb-8 bg-background">
-        <div>
-          <button
-            onClick={handleStartMission}
-            className={`w-full text-sub3_sb_16 rounded-xl py-4 ${isFormValid ? "bg-primary text-white" : "bg-cool-neutral-95 text-cool-neutral-70"}`}
-          >
-            미션 시작하기
-          </button>
-        </div>
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-5 pt-7 pb-10 bg-linear-to-t from-white from-70% to-transparent">
+        <button
+          onClick={handleStartMission}
+          className={`w-full text-sub3_sb_16 rounded-lg py-4 ${isFormValid ? "bg-primary text-white" : "bg-cool-neutral-95 text-cool-neutral-70"}`}
+        >
+          미션 시작하기
+        </button>
       </div>
     </div>
   );

@@ -124,7 +124,7 @@ const Home = () => {
               </div>
               <div className="flex flex-col items-end gap-0.5">
                 <div className="text-title1_sb_20 text-primary">
-                  {user?.totalAccumulatedReward.toLocaleString()} 원
+                  {(user?.totalAccumulatedReward || 0).toLocaleString()} 원
                 </div>
                 <div className="text-caption4_r_12 text-[#292C32]">
                   지난 달 대비{" "}
