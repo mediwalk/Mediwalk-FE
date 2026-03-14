@@ -6,8 +6,8 @@ interface ErrorModalProps {
 
 const ErrorModal = ({ title, detail, onClose }: ErrorModalProps) => {
   return (
-    <div className="absolute flex inset-0 z-60 bg-black/70 items-center justify-center backdrop-blur-md">
-      <div className="flex flex-col bg-common-white px-5 pt-5 pb-4 gap-2 rounded-xl w-90">
+    <div className="absolute flex px-4 inset-0 z-60 bg-black/70 items-center justify-center backdrop-blur-md">
+      <div className="flex flex-col bg-common-white px-5 pt-5 pb-4 gap-2 rounded-lg w-full">
         <div className="flex flex-col gap-2 justify-center">
           <div className="text-sub1_sb_18">{title}</div>
           <div className="text-body4_r_14 text-neutral-30 whitespace-pre-line">
