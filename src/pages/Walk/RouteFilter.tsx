@@ -69,7 +69,7 @@ const RouteFilter = () => {
     current: string | null,
     setter: (val: string) => void,
   ) => (
-    <div className="flex gap-1">
+    <div className="flex gap-1.5">
       {options.map((option) => (
         <button
           key={option}

@@ -6,8 +6,9 @@ import {
   useParams,
   useLocation,
 } from "react-router-dom";
-import { IoClose } from "react-icons/io5";
-import { PiMapPinFill } from "react-icons/pi";
+import CloseIcon from "../../assets/icons/delete_line.svg?react";
+import BulletIcon from "../../assets/icons/bullet.svg?react";
+import LocationIcon from "../../assets/icons/location_fill.svg?react";
 import ConfirmModal from "../../components/ConfirmModal";
 import api from "../../api/axios";
 import ErrorModal from "../../components/ErrorModal";
@@ -151,6 +152,72 @@ const RoutePreview = () => {
               distanceFromPrevious: 500,
               instruction: "목적지에 도착했습니다! 운동 완료!",
             },
+            {
+              id: 1004,
+              routeId: 105,
+              name: "해오라기 어린이공원",
+              type: "REST_BENCH",
+              latitude: 37.632,
+              longitude: 127.0765,
+              order: 1,
+              distanceFromPrevious: 800,
+              instruction: "해오라기 어린이공원 벤치에서 잠시 쉬어가세요.",
+            },
+            {
+              id: 1005,
+              routeId: 105,
+              name: "GS25 공릉타운점",
+              type: "PARK",
+              latitude: 37.6355,
+              longitude: 127.078,
+              order: 2,
+              distanceFromPrevious: 1200,
+              instruction: "당뇨 관리에 좋은 저당식품들을 구경해보세요.",
+            },
+            {
+              id: 1006,
+              routeId: 105,
+              name: "공릉1동 주민센터",
+              type: "DESTINATION",
+              latitude: 37.638,
+              longitude: 127.0795,
+              order: 3,
+              distanceFromPrevious: 500,
+              instruction: "목적지에 도착했습니다! 운동 완료!",
+            },
+            {
+              id: 1007,
+              routeId: 105,
+              name: "해오라기 어린이공원",
+              type: "REST_BENCH",
+              latitude: 37.632,
+              longitude: 127.0765,
+              order: 1,
+              distanceFromPrevious: 800,
+              instruction: "해오라기 어린이공원 벤치에서 잠시 쉬어가세요.",
+            },
+            {
+              id: 1008,
+              routeId: 105,
+              name: "GS25 공릉타운점",
+              type: "PARK",
+              latitude: 37.6355,
+              longitude: 127.078,
+              order: 2,
+              distanceFromPrevious: 1200,
+              instruction: "당뇨 관리에 좋은 저당식품들을 구경해보세요.",
+            },
+            {
+              id: 1009,
+              routeId: 105,
+              name: "공릉1동 주민센터",
+              type: "DESTINATION",
+              latitude: 37.638,
+              longitude: 127.0795,
+              order: 3,
+              distanceFromPrevious: 500,
+              instruction: "목적지에 도착했습니다! 운동 완료!",
+            },
           ],
           generatedAt: "2026-02-20T20:00:00Z",
           completedAt: null,
@@ -280,13 +347,13 @@ const RoutePreview = () => {
           onClick={() => setIsModalOpen(!isModalOpen)}
           className="fixed w-full max-w-md left-1/2 -translate-x-1/2 top-10 inset-x-0 px-5 z-50 pointer-events-auto"
         >
-          <div className="bg-white rounded-full px-5 py-3 flex items-center justify-between shadow-md shadow-[#4A4E56]/6">
+          <div className="bg-white rounded-full pl-5 pr-4 py-3 flex items-center justify-between shadow-card">
             <div className="flex gap-3 items-center">
               <span className="text-primary text-sub3_sb_16">목적지</span>
               <span className="text-body1_m_16">공릉1동 주민센터</span>
             </div>
             <button onClick={() => setIsModalOpen(!isModalOpen)}>
-              <IoClose className="size-6 text-[#6C727C]" />
+              <CloseIcon className="w-6 h-6 text-[#6C727C]" />
             </button>
           </div>
         </div>
@@ -308,52 +375,58 @@ const RoutePreview = () => {
           {/* 드래그 핸들 */}
           <div
             onPointerDown={(e) => controls.start(e)}
-            className="flex justify-center py-4 cursor-grab active:cursor-grabbing touch-none flex-none"
+            className="flex justify-center py-3 cursor-grab active:cursor-grabbing touch-none"
           >
-            <div className="w-15 h-1.5 bg-[#C3C7CE] rounded-full" />
+            <div className="w-15 h-1 bg-[#C3C7CE] rounded-full" />
           </div>
 
           {/* 내부 레이아웃 */}
-          <div className="flex flex-col h-full overflow-hidden">
+          <div className="flex flex-col h-full px-5 overflow-hidden">
             {/* 헤더 */}
-            <div className="px-8 pb-2 flex-none">
-              <div className="mb-5 mt-3 flex flex-col gap-2">
-                <h2 className="text-title1_sb_20 leading-tight mb-2">
+            <div className="pb-5 flex-none">
+              <div className="flex flex-col gap-2">
+                <h2 className="text-title1_sb_20 mb-2">
                   지구를 지키는
                   <br />
                   운동을 시작해볼까요?
                 </h2>
-                <p className="text-[#40444B] text-caption3_r_13">
+                <div className="flex gap-0.5 items-center">
                   <span className="text-primary text-caption1_m_13">
                     총 {routeData?.totalDistanceMeters}m{" "}
                   </span>
-                  • 평균 경사도 {slopeMap[routeData?.averageSlope]} •{" "}
-                  {activityMap[routeData?.activityLevel]} 활동량
-                </p>
+                  <BulletIcon className="w-4 h-4 text-[#7A8396]" />
+                  <span className="text-[#40444B] text-caption3_r_13">
+                    평균 경사도 {slopeMap[routeData?.averageSlope]}
+                  </span>
+                  <BulletIcon className="w-4 h-4 text-[#7A8396]" />
+                  <span className="text-[#40444B] text-caption3_r_13">
+                    {activityMap[routeData?.activityLevel]} 활동량
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* 휴식 포인트 */}
-            <div className="flex-1 overflow-y-auto px-8 min-h-0 no-scrollbar pb-20">
+            <div className="flex-1 overflow-y-auto min-h-0 no-scrollbar py-2 pb-20">
               {/* map() 함수를 이용해서 배열 길이만큼 반복해서 그림 */}
               {routeData?.restPoints?.map((point: any, index: number) => {
                 const isLast = index === routeData.restPoints.length - 1; // 마지막 목적지인지 확인
                 return (
                   <div
                     key={point.id}
-                    className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1"
+                    className="grid grid-cols-[auto_1fr] gap-x-3"
                   >
-                    <div className="flex flex-col items-center pt-1">
-                      <div className="size-3 rounded-full border-2 border-gray-300 bg-white z-10" />
+                    <div className="flex flex-col items-center">
+                      <div className="w-4 h-4 rounded-full border-2 border-[#97A2B8] bg-[#F3F7FF] z-10 shrink-0" />
                       {/* 마지막 줄이면 점선을 안 그림 */}
                       {!isLast && (
-                        <div className="w-0.5 h-full border-l-2 border-dashed border-gray-200 -mt-1" />
+                        <div className="w-0.5 h-full border-l border-dashed border-[#97A2B8]" />
                       )}
                     </div>
-                    <div className="pb-8">
-                      <div className="flex items-center gap-1 mb-1.5 text-[#6C727C] text-caption1_m_13">
+                    <div className="pb-8 flex flex-col gap-1.5">
+                      <div className="flex items-center gap-1 text-[#6C727C] text-caption1_m_13">
                         <span>
-                          <PiMapPinFill className="size-4 text-primary" />
+                          <LocationIcon className="w-4 h-4 text-primary" />
                         </span>
                         {point.name}
                       </div>
@@ -368,7 +441,7 @@ const RoutePreview = () => {
           </div>
         </motion.div>
         {/* 인증하기 버튼 */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-6 pb-8 pt-4 bg-white z-50 pointer-events-auto">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-5 pb-10 pt-7 z-50 pointer-events-auto bg-linear-to-t from-white from-70% to-transparent">
           <button
             onClick={handleAuthenticate}
             className="w-full py-4 bg-primary rounded-xl text-white text-sub3_sb_16 active:scale-99 transition-transform"
