@@ -7,13 +7,7 @@ import { useCurrentLocation } from "../../hooks/useCurrentLocation";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import { getTodayDate } from "../../utils/date";
-
-interface UserData {
-  id: number;
-  name: string;
-  totalAccumulatedReward: number;
-  rewardIncreaseRateComparedToLastMonth: number;
-}
+import useUserStore from "../../store/useUserStore";
 
 export interface MissionsData {
   id: number;
@@ -38,13 +32,19 @@ interface BinLocationData {
 
 const Home = () => {
   const { myLocation, isLocating } = useCurrentLocation();
+  const navigate = useNavigate();
 
-  const [user, setUser] = useState<UserData | null>(null);
+  // zustand 스토어에서 이름과 저장 함수 꺼내옴
+  const { name, setUser } = useUserStore();
+
+  // 리워드 전용 로컬 상태
+  const [rewardInfo, setRewardInfo] = useState({
+    total: 0,
+    increaseRate: 0,
+  });
   const [missions, setMissions] = useState<MissionsData[]>([]);
   const [bins, setBins] = useState<BinLocationData[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const navigate = useNavigate();
 
   // 인디케이터용 상태 및 ref 추가
   const [currentMissionIndex, setCurrentMissionIndex] = useState(0);
@@ -71,7 +71,20 @@ const Home = () => {
 
         // 1. 사용자 정보 가져오기 (ID: 1번 유저라고 가정)
         const userRes = await api.get("/users/1");
-        setUser(userRes.data);
+        const userData = userRes.data;
+
+        // zustand에 유저 정보 저장
+        setUser({
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+        });
+
+        // home 화면 로컬에 리워드 정보 저장
+        setRewardInfo({
+          total: userData.totalAccumulatedReward,
+          increaseRate: userData.rewardIncreaseRateComparedToLastMonth,
+        });
 
         // 2. 미션 정보 가져오기
         const today = getTodayDate();
@@ -112,7 +125,7 @@ const Home = () => {
           {/* 인사말, 리워드 */}
           <section className="px-5 flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <h1 className="text-head1_sb_24">안녕하세요, {user?.name}님</h1>
+              <h1 className="text-head1_sb_24">안녕하세요, {name}님</h1>
               <p className="text-body4_r_14 text-[#6B7078]">
                 오늘도 건강하게 폐의약품 수거해볼까요?
               </p>
@@ -124,11 +137,10 @@ const Home = () => {
               </div>
               <div className="flex flex-col items-end gap-0.5">
                 <div className="text-title1_sb_20 text-primary">
-                  {(user?.totalAccumulatedReward || 0).toLocaleString()} 원
+                  {(rewardInfo?.total || 0).toLocaleString()} 원
                 </div>
                 <div className="text-caption4_r_12 text-[#292C32]">
-                  지난 달 대비{" "}
-                  {user?.rewardIncreaseRateComparedToLastMonth || 0}%
+                  지난 달 대비 {rewardInfo?.increaseRate || 0}%
                 </div>
               </div>
             </div>
