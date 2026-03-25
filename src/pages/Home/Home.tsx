@@ -113,7 +113,7 @@ const Home = () => {
     };
 
     fetchData();
-  }, [myLocation, isLocating]);
+  }, [myLocation, isLocating, setUser]);
 
   return (
     <>

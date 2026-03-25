@@ -1,8 +1,11 @@
 import Header from "../../components/Header";
 import PillIcon from "../../assets/icons/pill_logo.svg?react";
 import SettingListItem from "./SettingListItem";
+import useUserStore from "../../store/useUserStore";
 
 const Mypage = () => {
+  const { name, email } = useUserStore();
+
   return (
     <div>
       <Header />
@@ -16,9 +19,9 @@ const Mypage = () => {
                 <PillIcon className="w-5 h-5 text-white" />
               </div>
               <div className="flex flex-col gap-0.5">
-                <span className="text-title1_sb_20">김메디</span>
+                <span className="text-title1_sb_20">{name}</span>
                 <span className="text-caption1_m_13 text-cool-neutral-30">
-                  mediwalk@gmail.com
+                  {email}
                 </span>
               </div>
             </div>
