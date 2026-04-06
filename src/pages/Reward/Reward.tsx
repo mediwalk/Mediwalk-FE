@@ -125,12 +125,12 @@ const Reward = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="h-[calc(100dvh-84px)] flex flex-col bg-background overflow-hidden">
       <Header />
 
-      <main className="flex flex-col px-5 py-3 w-full">
+      <main className="flex flex-col flex-1 py-3 w-full min-h-0">
         {/* Top Total Reward Card */}
-        <section className="bg-primary flex flex-col px-4 pt-5 pb-4 mb-3 gap-3 rounded-xl text-common-white shadow-card">
+        <section className="bg-primary flex flex-col px-4 pt-5 pb-4 mx-5 mb-3 gap-3 rounded-xl text-common-white shadow-card shrink-0">
           <div className="flex flex-col">
             <div className="text-body2_m_14">총 적립 리워드</div>
             <div className="flex items-center justify-between">
@@ -153,7 +153,7 @@ const Reward = () => {
         </section>
 
         {/* Two small cards */}
-        <section className="flex gap-2">
+        <section className="flex gap-2 mx-5 shrink-0">
           <div
             className="flex flex-col flex-1 bg-common-white rounded-lg p-3 gap-2 shadow-card"
             onClick={() => navigate("/reward/monthlyReward")}
@@ -196,8 +196,8 @@ const Reward = () => {
         </section>
 
         {/* Tabs */}
-        <section className="flex flex-col pt-5 pb-10 gap-4">
-          <nav className="flex">
+        <section className="flex flex-col flex-1 pt-5 gap-4 min-h-0">
+          <nav className="flex mx-5 shrink-0">
             <button
               className={`py-3 w-22 h-11 text-center transition-colors cursor-pointer ${activeTab === "달성 목표" ? "text-common-black text-sub3_sb_16 shadow-[inset_0_-3px_0_0_currentColor]" : "text-[#686F7A] text-body1_m_16"}`}
               onClick={() => setActiveTab("달성 목표")}
@@ -213,7 +213,7 @@ const Reward = () => {
           </nav>
 
           {/* Tab Content */}
-          <section className="flex flex-col gap-2">
+          <section className="flex flex-col flex-1 px-5 pb-2 gap-2 overflow-y-auto no-scrollbar min-h-0">
             {activeTab === "달성 목표" &&
               goalsData.map((goal, index) => (
                 <div
@@ -242,7 +242,7 @@ const Reward = () => {
 
             {activeTab === "적립 내역" &&
               (transactionData.length > 0 ? (
-                <div className="flex flex-col px-5 bg-common-white card-shadow rounded-xl">
+                <div className="flex flex-col px-5 bg-common-white shadow-card rounded-xl">
                   {transactionData.map((data, index) => (
                     <div
                       key={index}
