@@ -9,6 +9,8 @@ import RouteFilter from "./pages/Walk/RouteFilter";
 import BottomSheet from "./pages/Walk/BottomSheet";
 import RoutePreview from "./pages/Walk/RoutePreview";
 import DisposalComplete from "./pages/Walk/DisposalComplete";
+import MonthlyRewardHistory from "./pages/Reward/MonthlyRewardHistory";
+import TotalCollectionHistory from "./pages/Reward/TotalCollectionHistory";
 
 function Layout() {
   const location = useLocation();
@@ -46,6 +48,15 @@ function Layout() {
             <Route path="/complete" element={<DisposalComplete />} />
 
             <Route path="/reward" element={<Reward />} />
+            <Route
+              path="/reward/monthlyReward"
+              element={<MonthlyRewardHistory />}
+            />
+            <Route
+              path="/reward/totalCollection"
+              element={<TotalCollectionHistory />}
+            />
+
             <Route path="/mypage" element={<Mypage />} />
           </Routes>
         </main>

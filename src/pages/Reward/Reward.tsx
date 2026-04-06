@@ -11,6 +11,7 @@ import PotIcon from "../../assets/icons/pot_badge.svg?react";
 import ShoeIcon from "../../assets/icons/shoe_badge.svg?react";
 import SaveIcon from "../../assets/icons/save_badge.svg?react";
 import api from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const goalsData = [
   {
@@ -75,6 +76,7 @@ interface FormattedTransaction {
 }
 
 const Reward = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("달성 목표");
 
   const [transactionData, setTransactionData] = useState<
@@ -152,7 +154,10 @@ const Reward = () => {
 
         {/* Two small cards */}
         <section className="flex gap-2">
-          <div className="flex flex-col flex-1 bg-common-white rounded-lg p-3 gap-2 shadow-card">
+          <div
+            className="flex flex-col flex-1 bg-common-white rounded-lg p-3 gap-2 shadow-card"
+            onClick={() => navigate("/reward/monthlyReward")}
+          >
             <div className="flex flex-col gap-1">
               <div className="flex gap-1.5 items-center text-body2_m_14 text-[#202123]">
                 <DateIcon className="w-4 h-4 text-primary" />
@@ -170,7 +175,10 @@ const Reward = () => {
             </div>
           </div>
 
-          <div className="flex flex-col flex-1 bg-common-white rounded-lg p-3 gap-2 shadow-card">
+          <div
+            className="flex flex-col flex-1 bg-common-white rounded-lg p-3 gap-2 shadow-card"
+            onClick={() => navigate("/reward/totalCollection")}
+          >
             <div className="flex flex-col gap-1">
               <div className="flex gap-1.5 items-center text-body2_m_14 text-[#202123]">
                 <DateIcon className="w-4 h-4 text-primary" />
