@@ -21,6 +21,8 @@ function Layout() {
     "/walk/filter",
     "/walk/preview",
     "/complete",
+    "/reward/monthlyReward",
+    "/reward/totalCollection",
   ];
   const hideNavBar = hideNavBarPaths.some((path) =>
     location.pathname.startsWith(path),
