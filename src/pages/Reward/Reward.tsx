@@ -16,50 +16,36 @@ const goalsData = [
   {
     title: "초보 환경 지킴이",
     description: "폐의약품 10회 이상 수거 완료",
-    icon: <PotIcon width={24} height={24} />,
-    iconBg: "bg-[#F3F6D3]",
+    icon: <PotIcon />,
+    iconBg: "bg-[#FEFCE8]",
     status: "달성",
   },
   {
     title: "건강한 걷기 전문가",
     description: "한 달 100,000보 이상 달성",
-    icon: (
-      <ShoeIcon
-        width={24}
-        height={24}
-        fill="#4E83FF"
-        className="text-primary"
-      />
-    ),
+    icon: <ShoeIcon fill="#EFF6FF" className="text-primary" />,
     iconBg: "bg-primary-extralight",
     status: "달성",
   },
   {
     title: "절약의 달인",
     description: "누적 50,000원 이상 적립",
-    icon: <SaveIcon width={24} height={24} className="text-[#F2994A]" />,
-    iconBg: "bg-[#FFF0E6]",
+    icon: <SaveIcon className="text-[#F2994A]" />,
+    iconBg: "bg-[#FEF0E8]",
     status: "달성",
   },
   {
     title: "건강한 걷기 전문가",
     description: "한 달 100,000보 이상 달성",
-    icon: (
-      <ShoeIcon
-        width={24}
-        height={24}
-        fill="#4E83FF"
-        className="text-primary"
-      />
-    ),
+    icon: <ShoeIcon fill="#EFF6FF" className="text-primary" />,
     iconBg: "bg-primary-extralight",
     status: "",
   },
   {
     title: "절약의 달인",
     description: "누적 50,000원 이상 적립",
-    icon: <SaveIcon width={24} height={24} className="text-[#F2994A]" />,
-    iconBg: "bg-[#FFF0E6]",
+    icon: <SaveIcon className="text-[#F2994A]" />,
+    iconBg: "bg-[#FEF0E8]",
     status: "",
   },
 ];
@@ -140,148 +126,144 @@ const Reward = () => {
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
 
-      <main className="flex-1 px-5 pb-8 overflow-y-auto w-full max-w-[480px] mx-auto no-scrollbar">
+      <main className="flex flex-col px-5 py-3 gap-3 w-full">
         {/* Top Total Reward Card */}
-        <section className="bg-primary rounded-[20px] p-[24px] text-common-white mt-2 mb-3 relative overflow-visible shadow-card">
-          <div className="text-body2_m_14 text-[#E6EFFF] mb-1 opacity-90">
-            총 적립 리워드
-          </div>
-          <div className="flex items-center justify-between mb-5">
-            <div className="text-[28px] font-bold leading-tight tracking-tight">
-              {50850} 원
+        <section className="bg-primary flex flex-col px-4 pt-5 pb-4 gap-3 rounded-xl text-common-white shadow-card">
+          <div className="flex flex-col">
+            <div className="text-body2_m_14">총 적립 리워드</div>
+            <div className="flex items-center justify-between">
+              <div className="text-head1_sb_24">50,850 원</div>
+              <ArrowRightIcon className="w-6 h-6" />
             </div>
-            <ArrowRightIcon className="w-5 h-5 text-common-white opacity-80" />
           </div>
 
-          <button className="w-full bg-common-white text-primary text-sub3_sb_16 py-3.5 rounded-xl mb-3 relative flex items-center justify-center gap-2 font-semibold shadow-sm cursor-pointer hover:bg-neutral-99 transition-colors">
-            <MoneyIcon className="w-5 h-5 text-primary" />
-            소모품 지원 신청하기
-          </button>
+          <div className="flex flex-col gap-2">
+            <button className="w-full flex gap-1.5 py-3.5 bg-common-white text-primary text-sub3_sb_16 rounded-lg items-center justify-center cursor-pointer">
+              <MoneyIcon className="w-5 h-5 text-primary" />
+              소모품 지원 신청하기
+            </button>
 
-          <div className="text-center text-[12px] flex items-center justify-center text-common-white font-medium opacity-80">
-            최소 지원 금액 10,000원 <BulletIcon className="w-4 h-4" /> 지원
-            수수료 무료
+            <div className="text-caption4_r_12 flex items-center justify-center text-common-white/90">
+              최소 지원 금액 10,000원 <BulletIcon className="w-4 h-4" /> 지원
+              수수료 무료
+            </div>
           </div>
         </section>
 
         {/* Two small cards */}
-        <section className="flex gap-3 mb-8">
-          <div className="flex-1 bg-common-white rounded-2xl p-4 shadow-card">
-            <div className="flex items-center text-caption2_m_12 text-neutral-50 mb-1 gap-1">
-              <DateIcon className="w-4 h-4 text-primary" />
-              이번 달
-            </div>
-            <div className="flex items-center justify-between mb-1">
-              <div className="text-sub1_sb_18 text-neutral-5 text-[17px]">
-                15,400 원
+        <section className="flex gap-2">
+          <div className="flex flex-col flex-1 bg-common-white rounded-lg p-3 gap-2 shadow-card">
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-1.5 items-center text-body2_m_14 text-[#202123]">
+                <DateIcon className="w-4 h-4 text-primary" />
+                이번 달
               </div>
-              <ArrowRightIcon className="w-4 h-4 text-neutral-70" />
+              <div className="flex items-center justify-between">
+                <div className="text-sub1_sb_18 text-common-black">
+                  15,400 원
+                </div>
+                <ArrowRightIcon className="w-5 h-5 text-[#6C727C]" />
+              </div>
             </div>
-            <div className="text-caption4_r_12 text-neutral-60 mt-2">
+            <div className="text-caption4_r_12 text-[#6B717B]">
               지난 달 대비 +24%
             </div>
           </div>
 
-          <div className="flex-1 bg-common-white rounded-2xl p-4 shadow-card">
-            <div className="flex items-center text-caption2_m_12 text-neutral-50 mb-1 gap-1">
-              <DateIcon className="w-4 h-4 text-primary" />
-              누적 수거
-            </div>
-            <div className="flex items-center justify-between mb-1">
-              <div className="text-sub1_sb_18 text-neutral-5 text-[17px]">
-                18 회
+          <div className="flex flex-col flex-1 bg-common-white rounded-lg p-3 gap-2 shadow-card">
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-1.5 items-center text-body2_m_14 text-[#202123]">
+                <DateIcon className="w-4 h-4 text-primary" />
+                누적 수거
               </div>
-              <ArrowRightIcon className="w-4 h-4 text-neutral-70" />
+              <div className="flex items-center justify-between">
+                <div className="text-sub1_sb_18 text-common-black">18 회</div>
+                <ArrowRightIcon className="w-5 h-5 text-[#6C727C]" />
+              </div>
             </div>
-            <div className="text-caption4_r_12 text-neutral-60 mt-2">
+            <div className="text-caption4_r_12 text-[#6B717B]">
               총 50,850원 적립
             </div>
           </div>
         </section>
 
         {/* Tabs */}
-        <nav className="flex border-b border-neutral-95 mb-4">
-          <button
-            className={`flex-1 text-center py-3 text-sub3_sb_16 transition-colors relative cursor-pointer ${activeTab === "달성 목표" ? "text-neutral-5 font-bold" : "text-neutral-60"}`}
-            onClick={() => setActiveTab("달성 목표")}
-          >
-            달성 목표
-            {activeTab === "달성 목표" && (
-              <div className="absolute bottom-[0] left-0 right-0 h-[2px] bg-neutral-5" />
-            )}
-          </button>
-          <button
-            className={`flex-1 text-center py-3 text-sub3_sb_16 transition-colors relative cursor-pointer ${activeTab === "적립 내역" ? "text-neutral-5 font-bold" : "text-neutral-60"}`}
-            onClick={() => setActiveTab("적립 내역")}
-          >
-            적립 내역
-            {activeTab === "적립 내역" && (
-              <div className="absolute bottom-[0] left-0 right-0 h-[2px] bg-neutral-5" />
-            )}
-          </button>
-        </nav>
+        <section className="flex flex-col pt-5 pb-10 gap-4">
+          <nav className="flex">
+            <button
+              className={`py-3 w-22 h-11 text-center transition-colors cursor-pointer ${activeTab === "달성 목표" ? "text-common-black text-sub3_sb_16 shadow-[inset_0_-3px_0_0_currentColor]" : "text-[#686F7A] text-body1_m_16"}`}
+              onClick={() => setActiveTab("달성 목표")}
+            >
+              달성 목표
+            </button>
+            <button
+              className={`py-3 w-22 h-11 text-center transition-colors cursor-pointer ${activeTab === "적립 내역" ? "text-common-black text-sub3_sb_16 shadow-[inset_0_-3px_0_0_currentColor]" : "text-[#686F7A] text-body1_m_16"}`}
+              onClick={() => setActiveTab("적립 내역")}
+            >
+              적립 내역
+            </button>
+          </nav>
 
-        {/* Tab Content */}
-        <section className="flex flex-col gap-[12px]">
-          {activeTab === "달성 목표" &&
-            goalsData.map((goal, index) => (
-              <div
-                key={index}
-                className="bg-common-white rounded-2xl p-[18px] flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-[50px] h-[50px] rounded-[16px] flex items-center justify-center ${goal.iconBg}`}
-                  >
-                    {goal.icon}
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="text-sub3_sb_16 text-neutral-5">
-                        {goal.title}
-                      </div>
-                      {goal.status && <Badge text={goal.status} />}
-                    </div>
-                    <div className="text-caption3_r_13 text-neutral-60 font-medium">
-                      {goal.description}
-                    </div>
-                  </div>
-                </div>
-                <ArrowRightIcon className="w-[18px] h-[18px] text-neutral-70" />
-              </div>
-            ))}
-
-          {activeTab === "적립 내역" &&
-            (transactionData.length > 0 ? (
-              transactionData.map((data, index) => (
+          {/* Tab Content */}
+          <section className="flex flex-col gap-2">
+            {activeTab === "달성 목표" &&
+              goalsData.map((goal, index) => (
                 <div
                   key={index}
-                  className="bg-common-white rounded-2xl p-[18px] flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
+                  className="bg-common-white rounded-xl px-3 py-4 flex items-center justify-between shadow-card"
                 >
-                  <div className="flex flex-col justify-center">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <div className="text-sub3_sb_16 text-neutral-5">
-                        {data.title}
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-11 h-11 rounded-full flex items-center justify-center ${goal.iconBg}`}
+                    >
+                      {goal.icon}
+                    </div>
+                    <div className="flex flex-col gap-1 justify-center">
+                      <div className="flex items-center gap-1">
+                        <div className="text-sub3_sb_16">{goal.title}</div>
+                        {goal.status && <Badge text={goal.status} />}
                       </div>
-                      {data.status && <Badge text={data.status} />}
-                    </div>
-                    <div className="flex items-center text-caption3_r_13 text-neutral-50 font-medium">
-                      {data.date} <BulletIcon className="w-4 h-4" />{" "}
-                      {data.location}
+                      <div className="text-caption3_r_13 text-[#6C727C]">
+                        {goal.description}
+                      </div>
                     </div>
                   </div>
-                  <div
-                    className={`text-sub2_m_18 font-semibold ${data.isPositive ? "text-primary" : "text-neutral-50"}`}
-                  >
-                    {data.amount}
-                  </div>
+                  <ArrowRightIcon className="w-5 h-5 text-[#6C727C]" />
                 </div>
-              ))
-            ) : (
-              <div className="text-center py-10 text-neutral-50 text-sub3_sb_16">
-                적립 내역이 없습니다.
-              </div>
-            ))}
+              ))}
+
+            {activeTab === "적립 내역" &&
+              (transactionData.length > 0 ? (
+                <div className="flex flex-col px-5 bg-common-white card-shadow rounded-xl">
+                  {transactionData.map((data, index) => (
+                    <div
+                      key={index}
+                      className="py-5 flex items-center justify-between shadow-[inset_0_-1px_0_0_#E8EBEF] last:shadow-none"
+                    >
+                      <div className="flex flex-col gap-1 justify-center">
+                        <div className="flex items-center gap-1">
+                          <div className="text-sub3_sb_16">{data.title}</div>
+                          {data.status && <Badge text={data.status} />}
+                        </div>
+                        <div className="flex gap-0.5 items-center text-caption3_r_13 text-[#6C727C]">
+                          {data.date} <BulletIcon className="w-4 h-4" />
+                          {data.location}
+                        </div>
+                      </div>
+                      <div
+                        className={`text-sub4_sb_14 ${data.isPositive ? "text-primary" : "text-[#6C727C]"}`}
+                      >
+                        {data.amount}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10 text-neutral-50 text-sub3_sb_16">
+                  적립 내역이 없습니다.
+                </div>
+              ))}
+          </section>
         </section>
       </main>
     </div>
