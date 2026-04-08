@@ -11,12 +11,14 @@ import RoutePreview from "./pages/Walk/RoutePreview";
 import DisposalComplete from "./pages/Walk/DisposalComplete";
 import MonthlyRewardHistory from "./pages/Reward/MonthlyRewardHistory";
 import TotalCollectionHistory from "./pages/Reward/TotalCollectionHistory";
+import Login from "./pages/Login/Login";
 
 function Layout() {
   const location = useLocation();
 
   // 네비게이션바 숨길 페이지 설정
   const hideNavBarPaths = [
+    "/login",
     "/mission",
     "/walk/filter",
     "/walk/preview",
@@ -34,6 +36,7 @@ function Layout() {
       <div className="w-full max-w-md h-dvh bg-background flex flex-col relative">
         <main className="flex-1 overflow-y-auto relative w-full no-scrollbar">
           <Routes>
+            <Route path="/login" element={<Login />} />
             <Route path="/" element={<Home />} />
             <Route path="/mission/:missionId" element={<MissionDetail />} />
 
