@@ -28,9 +28,12 @@ function Layout() {
     "/reward/monthlyReward",
     "/reward/totalCollection",
   ];
-  const hideNavBar = hideNavBarPaths.some((path) =>
-    location.pathname.startsWith(path),
-  );
+  const hideNavBar = hideNavBarPaths.some((path) => {
+    if (path === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(path);
+  });
 
   return (
     <div className="min-h-dvh bg-gray-100 flex justify-center items-center">

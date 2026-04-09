@@ -1,7 +1,45 @@
 import PillLogo from "../../assets/icons/pill_logo.svg?react";
 import GoogleLogo from "../../assets/icons/google_logo.svg?react";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/axios";
+import { auth, provider } from "../../api/firebase";
+import { signInWithPopup } from "firebase/auth";
+import useUserStore from "../../store/useUserStore";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { setUser } = useUserStore();
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      const idToken = await user.getIdToken();
+
+      const requestBody = {
+        idToken: idToken,
+      };
+
+      const response = await api.post("/auth/google", requestBody);
+
+      console.log("백엔드 로그인 성공 응답:", response.data);
+
+      setUser({
+        id: response.data.user.id,
+        name: response.data.user.name,
+        email: response.data.user.email,
+      });
+
+      // 로그인되면 홈 화면으로 이동
+      navigate("/home", { replace: true });
+    } catch (error) {
+      console.error("로그인 중 에러 발생:", error);
+      alert(
+        "로그인에 실패했습니다. 창을 닫았거나 네트워크 문제일 수 있습니다.",
+      );
+    }
+  };
   return (
     <main className="flex flex-col">
       <section className="flex flex-col mt-38.5 gap-4 px-5">
@@ -19,7 +57,10 @@ const Login = () => {
         </div>
       </section>
       <section className="flex flex-col items-center w-full max-w-md gap-7 px-5 mb-20 bottom-0 fixed">
-        <div className="flex w-full items-center justify-center gap-3 p-3.5 text-lg font-semibold leading-5 tracking-[-0.015em] text-[#1F1F1F] bg-common-white rounded-lg shadow-card cursor-pointer">
+        <div
+          onClick={handleGoogleLogin}
+          className="flex w-full items-center justify-center gap-3 p-3.5 text-lg font-semibold leading-5 tracking-[-0.015em] text-[#1F1F1F] bg-common-white rounded-lg shadow-card cursor-pointer"
+        >
           <GoogleLogo className="w-6 h-6" />
           구글로 계속하기
         </div>

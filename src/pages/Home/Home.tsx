@@ -35,7 +35,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   // zustand 스토어에서 이름과 저장 함수 꺼내옴
-  const { name, setUser } = useUserStore();
+  const { name, id, setUser } = useUserStore();
 
   // 리워드 전용 로컬 상태
   const [rewardInfo, setRewardInfo] = useState({
@@ -64,33 +64,22 @@ const Home = () => {
 
   // API 호출 - 화면이 켜지면 실행
   useEffect(() => {
-    if (isLocating || !myLocation) return;
+    if (isLocating || !myLocation || !id) return;
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        // 1. 사용자 정보 가져오기 (ID: 1번 유저라고 가정)
-        const userRes = await api.get("/users/1");
-        const userData = userRes.data;
-
-        // zustand에 유저 정보 저장
-        setUser({
-          id: userData.id,
-          name: userData.name,
-          email: userData.email,
-        });
-
-        // home 화면 로컬에 리워드 정보 저장
+        const userRes = await api.get(`/users/${id}`);
         setRewardInfo({
-          total: userData.totalAccumulatedReward,
-          increaseRate: userData.rewardIncreaseRateComparedToLastMonth,
+          total: userRes.data.totalAccumulatedReward,
+          increaseRate: userRes.data.rewardIncreaseRateComparedToLastMonth,
         });
 
         // 2. 미션 정보 가져오기
         const today = getTodayDate();
         const missionRes = await api.get("/user-daily-missions", {
           params: {
-            userId: userRes.data.id,
+            userId: id,
             missionDate: today,
           },
         });
