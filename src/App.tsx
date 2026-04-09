@@ -13,6 +13,7 @@ import MonthlyRewardHistory from "./pages/Reward/MonthlyRewardHistory";
 import TotalCollectionHistory from "./pages/Reward/TotalCollectionHistory";
 import Login from "./pages/Login/Login";
 import Splash from "./pages/Login/Splash";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function Layout() {
   const location = useLocation();
@@ -43,32 +44,36 @@ function Layout() {
           <Routes>
             <Route path="/" element={<Splash />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/mission/:missionId" element={<MissionDetail />} />
 
-            <Route path="/walk" element={<Walk />}>
-              {/* /walk 진입 시: 기본 리스트 상태 */}
-              <Route index element={<BottomSheet />} />
-              {/* /walk/:binId 진입 시: 특정 수거함 선택 상태 */}
-              <Route path=":binId" element={<BottomSheet />} />
-              {/* /walk/filter/:binId 진입 시: AI 필터 설정 상태 */}
-              <Route path="filter/:binId" element={<RouteFilter />} />
-              {/* /walk/preview/:binId 진입 시: 특정 수거함까지의 경로 */}
-              <Route path="preview/:binId" element={<RoutePreview />} />
+            {/* 로그인 후에만 접근 가능한 페이지들 */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/home" element={<Home />} />
+              <Route path="/mission/:missionId" element={<MissionDetail />} />
+
+              <Route path="/walk" element={<Walk />}>
+                {/* /walk 진입 시: 기본 리스트 상태 */}
+                <Route index element={<BottomSheet />} />
+                {/* /walk/:binId 진입 시: 특정 수거함 선택 상태 */}
+                <Route path=":binId" element={<BottomSheet />} />
+                {/* /walk/filter/:binId 진입 시: AI 필터 설정 상태 */}
+                <Route path="filter/:binId" element={<RouteFilter />} />
+                {/* /walk/preview/:binId 진입 시: 특정 수거함까지의 경로 */}
+                <Route path="preview/:binId" element={<RoutePreview />} />
+              </Route>
+              <Route path="/complete" element={<DisposalComplete />} />
+
+              <Route path="/reward" element={<Reward />} />
+              <Route
+                path="/reward/monthlyReward"
+                element={<MonthlyRewardHistory />}
+              />
+              <Route
+                path="/reward/totalCollection"
+                element={<TotalCollectionHistory />}
+              />
+
+              <Route path="/mypage" element={<Mypage />} />
             </Route>
-            <Route path="/complete" element={<DisposalComplete />} />
-
-            <Route path="/reward" element={<Reward />} />
-            <Route
-              path="/reward/monthlyReward"
-              element={<MonthlyRewardHistory />}
-            />
-            <Route
-              path="/reward/totalCollection"
-              element={<TotalCollectionHistory />}
-            />
-
-            <Route path="/mypage" element={<Mypage />} />
           </Routes>
         </main>
         {!hideNavBar && <NavBar />}
