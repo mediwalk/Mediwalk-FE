@@ -93,7 +93,7 @@ const MissionDetail = () => {
     <div className="px-5 h-dvh flex flex-col overflow-hidden">
       {/* 헤더 */}
       <header className="pt-6 pb-3 items-baseline shrink-0">
-        <ArrowIcon className="w-6 h-6" onClick={() => navigate("/")} />
+        <ArrowIcon className="w-6 h-6" onClick={() => navigate("/home")} />
       </header>
 
       {/* 메인 영역 */}

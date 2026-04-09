@@ -140,7 +140,7 @@ const Reward = () => {
           </div>
 
           <div className="flex flex-col gap-2">
-            <button className="w-full flex gap-1.5 py-3.5 bg-common-white text-primary text-sub3_sb_16 rounded-lg items-center justify-center cursor-pointer">
+            <button className="w-full flex gap-1.5 py-3 bg-common-white text-primary text-sub3_sb_16 rounded-lg items-center justify-center cursor-pointer">
               <MoneyIcon className="w-5 h-5 text-primary" />
               소모품 지원 신청하기
             </button>

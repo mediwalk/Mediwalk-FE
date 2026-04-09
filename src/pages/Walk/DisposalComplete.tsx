@@ -6,7 +6,7 @@ const DisposalComplete = () => {
   const navigate = useNavigate();
 
   const returnHome = () => {
-    navigate("/");
+    navigate("/home");
   };
 
   return (
