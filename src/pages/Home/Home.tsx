@@ -44,7 +44,7 @@ const Home = () => {
   });
   const [missions, setMissions] = useState<MissionsData[]>([]);
   const [bins, setBins] = useState<BinLocationData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   // 인디케이터용 상태 및 ref 추가
   const [currentMissionIndex, setCurrentMissionIndex] = useState(0);
