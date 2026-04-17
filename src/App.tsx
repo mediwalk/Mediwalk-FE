@@ -13,7 +13,7 @@ import MonthlyRewardHistory from "./pages/Reward/MonthlyRewardHistory";
 import TotalCollectionHistory from "./pages/Reward/TotalCollectionHistory";
 import Login from "./pages/Login/Login";
 import Splash from "./pages/Login/Splash";
-import ProtectedRoute from "./components/ProtectedRoute";
+//import ProtectedRoute from "./components/ProtectedRoute";
 
 function Layout() {
   const location = useLocation();

@@ -12,7 +12,7 @@ import { mapActivityLevel, mapSlopeLevel } from "../../../utils/filter";
 const MissionDetail = () => {
   const { missionId } = useParams();
 
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [mission, setMission] = useState<MissionsData | null>(null);
 
   const navigate = useNavigate();

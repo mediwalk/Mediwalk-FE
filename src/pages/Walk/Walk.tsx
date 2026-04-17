@@ -1,4 +1,3 @@
-import { BiBell } from "react-icons/bi";
 import MyGoogleMap from "./components/GoogleMap";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";

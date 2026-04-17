@@ -43,7 +43,7 @@ const RoutePreview = () => {
   const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const [windowHeight] = useState(window.innerHeight);
 
   // AI 경로 결과 저장할 상태
   const [routeData, setRouteData] = useState<any>(null);

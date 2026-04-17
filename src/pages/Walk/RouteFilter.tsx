@@ -11,7 +11,7 @@ import { mapActivityLevel, mapSlopeLevel } from "../../utils/filter";
 const RouteFilter = () => {
   const navigate = useNavigate();
   const { binId } = useParams();
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   const [bin, setBin] = useState<BinLocationData | null>(null);
 

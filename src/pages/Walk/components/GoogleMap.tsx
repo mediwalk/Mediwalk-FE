@@ -64,7 +64,7 @@ export default function MyGoogleMap({
 
     // watchPosition은 위치가 변할 때마다 콜백을 실행
     const watchId = navigator.geolocation.watchPosition(
-      (position) => {
+      (_position) => {
         const newPos = {
           lat: 37.62476618466441,
           lng: 127.07364509499423,
