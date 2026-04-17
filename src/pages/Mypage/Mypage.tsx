@@ -48,9 +48,9 @@ const Mypage = () => {
                   <PillIcon className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-title1_sb_20">{name}</span>
+                  <span className="text-title1_sb_20">{name || "김메디"}</span>
                   <span className="text-caption1_m_13 text-cool-neutral-30">
-                    {email}
+                    {email || "mediwalk@gmail.com"}
                   </span>
                 </div>
               </div>

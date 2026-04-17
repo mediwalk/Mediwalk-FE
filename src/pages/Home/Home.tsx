@@ -114,7 +114,9 @@ const Home = () => {
           {/* 인사말, 리워드 */}
           <section className="px-5 flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <h1 className="text-head1_sb_24">안녕하세요, {name}님</h1>
+              <h1 className="text-head1_sb_24">
+                안녕하세요, {name || "김메디"}님
+              </h1>
               <p className="text-body4_r_14 text-[#6B7078]">
                 오늘도 건강하게 폐의약품 수거해볼까요?
               </p>
