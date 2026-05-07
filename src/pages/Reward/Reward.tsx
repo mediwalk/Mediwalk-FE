@@ -117,7 +117,7 @@ const Reward = () => {
                 date: formattedDate,
                 // 적립일 땐 locationName 우선, 환급일 땐 은행+계좌번호
                 location: isAccumulation
-                  ? item.locationName
+                  ? item.locationName || "위치 정보 없음"
                   : `${item.bankName || ""} ${item.accountNumberMasked || ""}`.trim(),
                 // amount가 양수면 +, 음수면 그대로(이미 -가 붙어있음) 출력
                 amount: `${item.amount > 0 ? "+" : ""}${item.amount.toLocaleString()}원`,
