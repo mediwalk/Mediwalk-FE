@@ -190,7 +190,7 @@ const MonthlyRewardHistory = () => {
                 return (
                   <article
                     key={item.id}
-                    className={`flex gap-2.5 p-4 rounded-xl bg-common-white shadow-card`}
+                    className="flex gap-2.5 p-4 rounded-xl bg-common-white shadow-card"
                   >
                     <div className="w-11 h-11 bg-[#EDF1F7] rounded-md shrink-0 overflow-hidden flex items-center justify-center">
                       {item.imageUrl ? (
@@ -202,7 +202,7 @@ const MonthlyRewardHistory = () => {
                         />
                       ) : (
                         // 이미지가 없으면 기본 배경색
-                        <div className="w-full h-full bg-[#D1D9E6]"></div>
+                        <div className="w-full h-full bg-[#97A2B8]"></div>
                       )}
                     </div>
                     <div className="flex flex-col flex-1 gap-1 justify-center">
