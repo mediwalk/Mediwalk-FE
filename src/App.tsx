@@ -55,11 +55,10 @@ function Layout() {
               <Route index element={<BottomSheet />} />
               {/* /walk/:binId 진입 시: 특정 수거함 선택 상태 */}
               <Route path=":binId" element={<BottomSheet />} />
-              {/* /walk/filter/:binId 진입 시: AI 필터 설정 상태 */}
-              <Route path="filter/:binId" element={<RouteFilter />} />
               {/* /walk/preview/:binId 진입 시: 특정 수거함까지의 경로 */}
               <Route path="preview/:binId" element={<RoutePreview />} />
             </Route>
+            <Route path="/walk/filter/:binId" element={<RouteFilter />} />
             <Route path="/complete" element={<DisposalComplete />} />
 
             <Route path="/reward" element={<Reward />} />
