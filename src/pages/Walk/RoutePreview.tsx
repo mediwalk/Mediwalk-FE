@@ -23,12 +23,11 @@ const RoutePreview = () => {
   const { binId } = useParams();
   const navigate = useNavigate();
 
-  const { state } = useLocation(); // 앞 페이지에서 넘긴 데이터 받기
+  const { state } = useLocation();
 
   const {
     setSheetState,
     sheetState,
-    setRoutePath,
     setRoutePolyline,
     myLocation,
     setSelectedBinId,
@@ -40,37 +39,74 @@ const RoutePreview = () => {
 
   const [windowHeight] = useState(window.innerHeight);
 
-  // AI 경로 결과 저장할 상태
   const [routeData, setRouteData] = useState<any>(null);
 
-  // 프리뷰 화면이 열리면 목적지(binId)를 선택된 상태로 지정
+  const [combinedPoints, setCombinedPoints] = useState<any[]>([]);
+
   useEffect(() => {
     if (binId) {
       setSelectedBinId(Number(binId));
     }
   }, [binId, setSelectedBinId]);
 
-  // 이전 페이지에서 넘어온 데이터를 세팅
   useEffect(() => {
     if (state && state.routeData) {
-      setRouteData(state.routeData);
+      const data = state.routeData;
+      setRouteData(data);
 
-      // 백엔드에서 받은 암호화된 경로 문자열(Polyline)을 지도 컴포넌트로 전달
-      if (state.routeData.routePolyline) {
-        setRoutePolyline(state.routeData.routePolyline);
+      if (data.routePolyline) {
+        setRoutePolyline(data.routePolyline);
       }
+
+      const points = [];
+
+      if (data.restPoints && data.restPoints.length > 0) {
+        points.push(
+          ...data.restPoints.map((p: any, index: number) => ({
+            id: `rest-${p.id || index}`,
+            title: p.name || "휴식 포인트",
+            desc: p.instruction || "근처 벤치에서 잠시 쉬어가세요.",
+          })),
+        );
+      }
+
+      if (
+        data.martSuggestionsAlongRoute &&
+        data.martSuggestionsAlongRoute.length > 0
+      ) {
+        points.push(
+          ...data.martSuggestionsAlongRoute.map((p: any, index: number) => ({
+            id: `mart-${p.poiKey || index}`,
+            title: p.name || "추천 마트",
+            desc: "산책 중 들러서 건강한 저당 식품을 구경해 보세요.",
+          })),
+        );
+      }
+
+      if (
+        data.parkSuggestionsAlongRoute &&
+        data.parkSuggestionsAlongRoute.length > 0
+      ) {
+        points.push(
+          ...data.parkSuggestionsAlongRoute.map((p: any, index: number) => ({
+            id: `park-${p.poiKey || index}`,
+            title: p.name || "추천 공원",
+            desc: "공원을 가로지르며 상쾌하게 걸어보세요.",
+          })),
+        );
+      }
+
+      setCombinedPoints(points);
     }
   }, [state, setRoutePolyline]);
 
   const controls = useDragControls();
 
-  // 인증하기 버튼 클릭 시 실행될 함수
   const handleAuthenticate = async () => {
     try {
-      let finalReward = 0; // 얻은 리워드
+      let finalReward = 0;
 
       if (state.isMission) {
-        // 미션에서 넘어온 경우
         await api.post(`/user-daily-missions/${state.missionId}/complete`, {
           earnedReward: state.earnedReward || 3000,
           currentLatitude: myLocation?.lat,
@@ -78,11 +114,10 @@ const RoutePreview = () => {
         });
         finalReward = state.earnedReward || 3000;
       } else {
-        // 일반 수거함에서 넘어온 경우
         await api.post("/events", {
-          userId: routeData?.userId || 1, // 백엔드 데이터 활용
+          userId: routeData?.userId || 1,
           eventType: "MEDICINE_COLLECTION",
-          title: "폐의약품 수거", // 필요시 state.name으로 대체
+          title: "폐의약품 수거",
           rewardAmount: 100,
           eventDateTime: new Date().toISOString(),
           collectionLocationId: state?.binId || routeData?.destinationId,
@@ -90,10 +125,9 @@ const RoutePreview = () => {
           currentLatitude: myLocation?.lat,
           currentLongitude: myLocation?.lng,
         });
-        finalReward = 100; // 임시
+        finalReward = 100;
       }
 
-      // 완료 후 성공 화면으로 이동
       navigate("/complete", {
         replace: true, // 뒤로가기 했을 때 이 프리뷰 페이지로 다시 못 오게 막음
         state: {
@@ -117,20 +151,10 @@ const RoutePreview = () => {
     }
   };
 
-  // 모달 제어 함수
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const closeModal = () => setIsModalOpen(false);
+  const closeErrorModal = () => setIsErrorModalOpen(false);
+  const confirmModal = () => navigate(`/walk/${binId}`);
 
-  const closeErrorModal = () => {
-    setIsErrorModalOpen(false);
-  };
-
-  const confirmModal = () => {
-    navigate(`/walk/${binId}`);
-  };
-
-  // 프리뷰 전용 위치 상수
   const TOP_Y = 110;
   const MIDDLE_Y = windowHeight * 0.52;
   const BOTTOM_Y = windowHeight - 140;
@@ -155,29 +179,30 @@ const RoutePreview = () => {
   return (
     <>
       <div className="relative h-dvh w-full pointer-events-none">
-        {/* 상단 목적지 플로팅 바  */}
         <div
           onClick={() => setIsModalOpen(!isModalOpen)}
-          className="fixed w-full max-w-md left-1/2 -translate-x-1/2 top-10 inset-x-0 px-5 z-50 pointer-events-auto"
+          className="fixed w-full max-w-md left-1/2 -translate-x-1/2 top-10 inset-x-0 px-5 z-50 pointer-events-auto cursor-pointer"
         >
           <div className="bg-white rounded-full pl-5 pr-4 py-3 flex items-center justify-between shadow-card">
             <div className="flex gap-3 items-center">
               <span className="text-primary text-sub3_sb_16">목적지</span>
               <span className="text-body1_m_16">공릉1동 주민센터</span>
             </div>
-            <button onClick={() => setIsModalOpen(!isModalOpen)}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsModalOpen(!isModalOpen);
+              }}
+            >
               <CloseIcon className="w-6 h-6 text-[#6C727C]" />
             </button>
           </div>
         </div>
 
-        {/* 바텀시트 */}
         <motion.div
           animate={{ y: getTargetY() }}
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          // 바텀시트 높이를 (화면 전체 - 상단 여백)으로 강제 설정
           style={{ height: windowHeight - TOP_Y }}
-          // style 높이를 따름
           className="fixed inset-x-0 top-0 bg-white w-full max-w-md mx-auto z-40 rounded-t-3xl shadow-xl flex flex-col pointer-events-auto overflow-hidden"
           drag="y"
           dragControls={controls}
@@ -185,7 +210,6 @@ const RoutePreview = () => {
           dragConstraints={{ top: TOP_Y, bottom: BOTTOM_Y }}
           onDragEnd={handleDragEnd}
         >
-          {/* 드래그 핸들 */}
           <div
             onPointerDown={(e) => controls.start(e)}
             className="flex justify-center py-3 cursor-grab active:cursor-grabbing touch-none"
@@ -193,9 +217,7 @@ const RoutePreview = () => {
             <div className="w-15 h-1 bg-[#C3C7CE] rounded-full" />
           </div>
 
-          {/* 내부 레이아웃 */}
           <div className="flex flex-col h-full px-5 overflow-hidden">
-            {/* 헤더 */}
             <div className="pb-5 flex-none">
               <div className="flex flex-col gap-2">
                 <h2 className="text-title1_sb_20 mb-2">
@@ -205,47 +227,55 @@ const RoutePreview = () => {
                 </h2>
                 <div className="flex gap-0.5 items-center">
                   <span className="text-primary text-caption1_m_13">
-                    총 {routeData?.totalDistanceMeters}m{" "}
+                    총 {routeData?.totalDistanceMeters || 0}m{" "}
                   </span>
                   <BulletIcon className="w-4 h-4 text-[#7A8396]" />
                   <span className="text-[#40444B] text-caption3_r_13">
-                    {activityMap[routeData?.activityLevel]} 활동량
+                    {routeData?.activityLevel
+                      ? activityMap[routeData.activityLevel]
+                      : "보통"}{" "}
+                    활동량
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* 휴식 포인트 */}
             <div className="flex-1 overflow-y-auto min-h-0 no-scrollbar py-2 pb-20">
-              {/* map() 함수를 이용해서 배열 길이만큼 반복해서 그림 */}
-              {routeData?.restPoints?.map((point: any, index: number) => {
-                const isLast = index === routeData.restPoints.length - 1; // 마지막 목적지인지 확인
-                return (
-                  <div
-                    key={point.id}
-                    className="grid grid-cols-[auto_1fr] gap-x-3"
-                  >
-                    <div className="flex flex-col items-center">
-                      <div className="w-4 h-4 rounded-full border-2 border-[#97A2B8] bg-[#F3F7FF] z-10 shrink-0" />
-                      {/* 마지막 줄이면 점선을 안 그림 */}
-                      {!isLast && (
-                        <div className="w-0.5 h-full border-l border-dashed border-[#97A2B8]" />
-                      )}
-                    </div>
-                    <div className="pb-8 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-1 text-[#6C727C] text-caption1_m_13">
-                        <span>
-                          <LocationIcon className="w-4 h-4 text-primary" />
-                        </span>
-                        {point.name}
+              {combinedPoints.length > 0 ? (
+                combinedPoints.map((point: any, index: number) => {
+                  const isLast = index === combinedPoints.length - 1;
+                  return (
+                    <div
+                      key={point.id}
+                      className="grid grid-cols-[auto_1fr] gap-x-3"
+                    >
+                      <div className="flex flex-col items-center">
+                        <div className="w-4 h-4 rounded-full border-[1.4px] border-[#97A2B8] bg-[#F3F7FF] z-10 shrink-0" />
+                        {!isLast && (
+                          <div className="w-0.5 h-full border-l border-dashed border-[#97A2B8]" />
+                        )}
                       </div>
-                      <p className="text-body1_m_16 text-[#202123] ">
-                        {point.instruction}
-                      </p>
+                      <div className="pb-8 flex flex-col gap-1.5">
+                        <div className="flex items-center gap-1 text-[#6C727C] text-caption1_m_13">
+                          <span>
+                            <LocationIcon className="w-4 h-4 text-primary" />
+                          </span>
+                          {point.title}
+                        </div>
+                        <p className="text-body1_m_16 text-[#202123]">
+                          {point.desc}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <div className="text-center text-[#6C727C] text-caption1_m_13 py-10">
+                  선택하신 경로 주변에 안내할 특별한 포인트가 없습니다.
+                  <br />
+                  목적지를 향해 바로 출발해 보세요!
+                </div>
+              )}
             </div>
           </div>
         </motion.div>
@@ -259,6 +289,7 @@ const RoutePreview = () => {
           </button>
         </div>
       </div>
+
       {isModalOpen && (
         <ConfirmModal
           title="목적지를 재설정 하시겠습니까?"
