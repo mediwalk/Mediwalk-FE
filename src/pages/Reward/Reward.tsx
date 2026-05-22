@@ -12,54 +12,57 @@ import ShoeIcon from "../../assets/icons/shoe_badge.svg?react";
 import SaveIcon from "../../assets/icons/save_badge.svg?react";
 import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-
-const goalsData = [
-  {
-    title: "초보 환경 지킴이",
-    description: "폐의약품 10회 이상 수거 완료",
-    icon: <PotIcon />,
-    iconBg: "bg-[#FEFCE8]",
-    status: "달성",
-  },
-  {
-    title: "건강한 걷기 전문가",
-    description: "한 달 100,000보 이상 달성",
-    icon: <ShoeIcon fill="#EFF6FF" className="text-primary" />,
-    iconBg: "bg-primary-extralight",
-    status: "달성",
-  },
-  {
-    title: "절약의 달인",
-    description: "누적 50,000원 이상 적립",
-    icon: <SaveIcon className="text-[#F2994A]" />,
-    iconBg: "bg-[#FEF0E8]",
-    status: "달성",
-  },
-  {
-    title: "건강한 걷기 전문가",
-    description: "한 달 100,000보 이상 달성",
-    icon: <ShoeIcon fill="#EFF6FF" className="text-primary" />,
-    iconBg: "bg-primary-extralight",
-    status: "",
-  },
-  {
-    title: "절약의 달인",
-    description: "누적 50,000원 이상 적립",
-    icon: <SaveIcon className="text-[#F2994A]" />,
-    iconBg: "bg-[#FEF0E8]",
-    status: "",
-  },
-];
+import useUserStore from "../../store/useUserStore";
 
 // API 응답용 타입
+interface RewardMainResponse {
+  userId: number;
+  lastMonthRewardTotal: number;
+  thisMonthRewardTotal: number;
+  thisMonthMedicineCollectionRewardTotal: number;
+  totalAccumulatedReward: number;
+  rewardIncreaseRateComparedToLastMonth: number | null;
+  totalCollectionsCount: number;
+  yearlyMedicineCollectionCount: number;
+  achievements: Achievement[];
+  recentRewardTransactions: RewardTransaction[];
+}
+
+interface Achievement {
+  userAchievementId: number;
+  achievementId: number;
+  achievementCode:
+    | "ENV_NOVICE"
+    | "ENV_GUARDIAN"
+    | "ENV_RELIABLE"
+    | "WALK_NEWBIE"
+    | "WALK_HEALTHY"
+    | "WALK_IRON"
+    | "SAVE_THRIFTY"
+    | "SAVE_EXPERT"
+    | "SAVE_ASSET";
+  achievementName: string;
+  achievementDescription: string;
+  achievementCategory:
+    | "ENVIRONMENTAL_PROTECTOR"
+    | "WALKING_EXPERT"
+    | "SAVINGS_MASTER";
+  isAchieved: boolean;
+  achievedDate: string | null;
+  iconType: "environment" | "walking" | "savings";
+}
+
 interface RewardTransaction {
   id: number;
   userId: number;
-  eventId?: number;
+  eventId: number;
+  eventTitle: string;
+  locationName: string;
+  eventType: "MEDICINE_COLLECTION" | "EXERCISE_MISSION_COMPLETE";
+  accumulationCompleted: boolean;
   amount: number;
   transactionType: "ACCUMULATION" | "REFUND";
   transactionDate: string;
-  description: string;
   bankName?: string;
   accountNumberMasked?: string;
 }
@@ -77,42 +80,52 @@ interface FormattedTransaction {
 
 const Reward = () => {
   const navigate = useNavigate();
+  const { id } = useUserStore();
   const [activeTab, setActiveTab] = useState("달성 목표");
+
+  const [rewardMainData, setRewardMainData] =
+    useState<RewardMainResponse | null>(null);
 
   const [transactionData, setTransactionData] = useState<
     FormattedTransaction[]
   >([]);
 
   useEffect(() => {
+    if (!id) return;
+
     const fetchTransactions = async () => {
       try {
-        const userId = 1; // 임시
-        const response = await api.get(`/reward-transactions?userId=${userId}`);
-
-        const rawData: RewardTransaction[] = response.data;
+        // 1. 리워드 메인 데이터 가져오기
+        const response = await api.get(`/reward-main`, {
+          params: { userId: id },
+        });
+        const data: RewardMainResponse = response.data;
+        setRewardMainData(data);
 
         // FormattedTransaction 형태로 가공
-        const formattedTransactionData: FormattedTransaction[] = rawData.map(
-          (data) => {
-            const isAccumulation = data.transactionType === "ACCUMULATION";
-            const dateObj = new Date(data.transactionDate || Date.now());
-            const formattedDate = `${dateObj.getFullYear()}. ${String(dateObj.getMonth() + 1).padStart(2, "0")}. ${String(dateObj.getDate()).padStart(2, "0")}`;
+        if (data.recentRewardTransactions) {
+          const formattedTransactionData: FormattedTransaction[] =
+            data.recentRewardTransactions.map((item) => {
+              const isAccumulation = item.transactionType === "ACCUMULATION";
+              const dateObj = new Date(item.transactionDate);
+              const formattedDate = `${dateObj.getFullYear()}. ${String(dateObj.getMonth() + 1).padStart(2, "0")}. ${String(dateObj.getDate()).padStart(2, "0")}`;
 
-            return {
-              id: data.id,
-              title: isAccumulation ? "폐의약품 수거" : "리워드 환급",
-              status: isAccumulation ? "적립 완료" : "",
-              date: formattedDate,
-              location: isAccumulation
-                ? data.description || "위치 정보 없음"
-                : `${data.bankName || ""} ${data.accountNumberMasked || ""}`.trim(),
-              amount: `${isAccumulation ? "+" : ""} ${data.amount.toLocaleString()}원`,
-              isPositive: isAccumulation,
-            };
-          },
-        );
-
-        setTransactionData(formattedTransactionData);
+              return {
+                id: item.id,
+                title: isAccumulation ? "폐의약품 수거" : "리워드 환급",
+                status: item.accumulationCompleted ? "적립 완료" : "",
+                date: formattedDate,
+                // 적립일 땐 locationName 우선, 환급일 땐 은행+계좌번호
+                location: isAccumulation
+                  ? item.locationName || "위치 정보 없음"
+                  : `${item.bankName || ""} ${item.accountNumberMasked || ""}`.trim(),
+                // amount가 양수면 +, 음수면 그대로(이미 -가 붙어있음) 출력
+                amount: `${item.amount > 0 ? "+" : ""}${item.amount.toLocaleString()}원`,
+                isPositive: item.amount > 0,
+              };
+            });
+          setTransactionData(formattedTransactionData);
+        }
       } catch (error) {
         console.error(
           "Failed to fetch transactions, loading fallback data:",
@@ -122,7 +135,25 @@ const Reward = () => {
     };
 
     fetchTransactions();
-  }, []);
+  }, [id]);
+
+  // 달성 목표에 맞춰 아이콘과 배경색을 찾아줌
+  const getIcon = (type: string) => {
+    if (type === "walking") {
+      return {
+        icon: <ShoeIcon fill="#EFF6FF" className="text-primary" />,
+        bg: "bg-primary-extralight",
+      };
+    }
+    if (type === "savings") {
+      return {
+        icon: <SaveIcon className="text-[#F2994A]" />,
+        bg: "bg-[#FEF0E8]",
+      };
+    }
+    // 기본값은 화분
+    return { icon: <PotIcon />, bg: "bg-[#FEFCE8]" };
+  };
 
   return (
     <div className="h-[calc(100dvh-84px)] flex flex-col bg-background overflow-hidden">
@@ -134,7 +165,10 @@ const Reward = () => {
           <div className="flex flex-col">
             <div className="text-body2_m_14">총 적립 리워드</div>
             <div className="flex items-center justify-between">
-              <div className="text-head1_sb_24">50,850 원</div>
+              <div className="text-head1_sb_24">
+                {(rewardMainData?.totalAccumulatedReward || 0).toLocaleString()}{" "}
+                원
+              </div>
               <ArrowRightIcon className="w-6 h-6" />
             </div>
           </div>
@@ -165,13 +199,19 @@ const Reward = () => {
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-sub1_sb_18 text-common-black">
-                  15,400 원
+                  {(rewardMainData?.thisMonthRewardTotal || 0).toLocaleString()}{" "}
+                  원
                 </div>
                 <ArrowRightIcon className="w-5 h-5 text-[#6C727C]" />
               </div>
             </div>
             <div className="text-caption4_r_12 text-[#6B717B]">
-              지난 달 대비 +24%
+              지난 달 대비{" "}
+              {rewardMainData?.rewardIncreaseRateComparedToLastMonth &&
+              rewardMainData.rewardIncreaseRateComparedToLastMonth > 0
+                ? "+"
+                : ""}
+              {rewardMainData?.rewardIncreaseRateComparedToLastMonth || 0}%
             </div>
           </div>
 
@@ -185,12 +225,16 @@ const Reward = () => {
                 누적 수거
               </div>
               <div className="flex items-center justify-between">
-                <div className="text-sub1_sb_18 text-common-black">18 회</div>
+                <div className="text-sub1_sb_18 text-common-black">
+                  {rewardMainData?.totalCollectionsCount || 0} 회
+                </div>
                 <ArrowRightIcon className="w-5 h-5 text-[#6C727C]" />
               </div>
             </div>
             <div className="text-caption4_r_12 text-[#6B717B]">
-              총 50,850원 적립
+              총{" "}
+              {(rewardMainData?.totalAccumulatedReward || 0).toLocaleString()}원
+              적립
             </div>
           </div>
         </section>
@@ -215,30 +259,37 @@ const Reward = () => {
           {/* Tab Content */}
           <section className="flex flex-col flex-1 px-5 pb-2 gap-2 overflow-y-auto no-scrollbar min-h-0">
             {activeTab === "달성 목표" &&
-              goalsData.map((goal, index) => (
-                <div
-                  key={index}
-                  className="bg-common-white rounded-xl px-3 py-4 flex items-center justify-between shadow-card"
-                >
-                  <div className="flex items-center gap-3">
+              rewardMainData?.achievements
+                .sort((a, b) => Number(b.isAchieved) - Number(a.isAchieved))
+                .map((goal) => {
+                  const { icon, bg } = getIcon(goal.iconType);
+                  return (
                     <div
-                      className={`w-11 h-11 rounded-full flex items-center justify-center ${goal.iconBg}`}
+                      key={goal.userAchievementId}
+                      className="bg-common-white rounded-xl px-3 py-4 flex items-center justify-between shadow-card"
                     >
-                      {goal.icon}
-                    </div>
-                    <div className="flex flex-col gap-1 justify-center">
-                      <div className="flex items-center gap-1">
-                        <div className="text-sub3_sb_16">{goal.title}</div>
-                        {goal.status && <Badge text={goal.status} />}
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-11 h-11 rounded-full flex items-center justify-center ${bg}`}
+                        >
+                          {icon}
+                        </div>
+                        <div className="flex flex-col gap-1 justify-center">
+                          <div className="flex items-center gap-1">
+                            <div className="text-sub3_sb_16">
+                              {goal.achievementName}
+                            </div>
+                            {goal.isAchieved && <Badge text="달성" />}
+                          </div>
+                          <div className="text-caption3_r_13 text-[#6C727C]">
+                            {goal.achievementDescription}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-caption3_r_13 text-[#6C727C]">
-                        {goal.description}
-                      </div>
+                      <ArrowRightIcon className="w-5 h-5 text-[#6C727C]" />
                     </div>
-                  </div>
-                  <ArrowRightIcon className="w-5 h-5 text-[#6C727C]" />
-                </div>
-              ))}
+                  );
+                })}
 
             {activeTab === "적립 내역" &&
               (transactionData.length > 0 ? (
