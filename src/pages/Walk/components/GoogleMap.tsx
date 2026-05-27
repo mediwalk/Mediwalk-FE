@@ -22,7 +22,7 @@ interface MapProps {
   selectedBinId: number | null;
   setSelectedBinId: (id: number | null) => void;
   setSheetState: (state: "half" | "collapsed" | "expanded") => void;
-  routePolyline?: string | null; // 💡 넘어온 암호화된 선 문자열
+  routePolyline?: string | null; 
   myLocation: { lat: number; lng: number };
 }
 

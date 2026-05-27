@@ -49,7 +49,6 @@ const Walk = () => {
 
   const { myLocation, isLocating } = useCurrentLocation();
 
-  // 💡 가짜 routePath를 지우고 진짜 routePolyline 상태를 살렸습니다!
   const [routePolyline, setRoutePolyline] = useState<string | null>(null);
 
   useEffect(() => {
