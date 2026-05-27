@@ -65,7 +65,7 @@ const RoutePreview = () => {
           ...data.restPoints.map((p: any, index: number) => ({
             id: `rest-${p.id || index}`,
             title: p.name || "휴식 포인트",
-            desc: p.instruction || "근처 벤치에서 잠시 쉬어가세요.",
+            desc: "근처 벤치에서 잠시 쉬어가세요.",
           })),
         );
       }
@@ -94,6 +94,14 @@ const RoutePreview = () => {
             desc: "공원을 가로지르며 상쾌하게 걸어보세요.",
           })),
         );
+      }
+
+      if (data.destinationName) {
+        points.push({
+          id: "destination",
+          title: data.destinationName,
+          desc: "목적지에 도착했어요! 오늘도 메디워크와 함께 지구를 지키는 운동을 완료했어요.",
+        });
       }
 
       setCombinedPoints(points);
@@ -186,7 +194,9 @@ const RoutePreview = () => {
           <div className="bg-white rounded-full pl-5 pr-4 py-3 flex items-center justify-between shadow-card">
             <div className="flex gap-3 items-center">
               <span className="text-primary text-sub3_sb_16">목적지</span>
-              <span className="text-body1_m_16">공릉1동 주민센터</span>
+              <span className="text-body1_m_16">
+                {routeData?.destinationName}
+              </span>
             </div>
             <button
               onClick={(e) => {
