@@ -113,7 +113,7 @@ const MissionDetail = () => {
                 </span>
               </div>
               <p className="text-body1_m_16 text-common-black">
-                {"공릉보건소"}
+                {mission?.destinationName || ""}
               </p>
             </div>
             {/* 거리 영역 */}
@@ -126,10 +126,10 @@ const MissionDetail = () => {
               </div>
               <div className="flex items-center gap-1 justify-end text-body1_m_16">
                 <span className=" text-common-black">
-                  {mission?.distanceMeters || ""}m
+                  {mission?.distanceMeters || "0"}m
                 </span>
                 <span className="text-cool-neutral-60">
-                  도보 약 {mission?.walkingDistanceMeters || ""}분
+                  도보 약 {mission?.walkingDistanceMeters || "0"}분
                 </span>
               </div>
             </div>
