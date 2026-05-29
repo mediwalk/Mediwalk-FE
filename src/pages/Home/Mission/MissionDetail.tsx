@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import ToggleButton from "../../../components/ToggleButton";
 import { useEffect, useState } from "react";
 import ArrowIcon from "../../../assets/icons/arrow1_left.svg?react";
 import LocationIcon from "../../../assets/icons/location_fill.svg?react";
@@ -7,25 +6,19 @@ import ClockIcon from "../../../assets/icons/time_fill.svg?react";
 import { useParams } from "react-router-dom";
 import type { MissionsData } from "../Home";
 import api from "../../../api/axios";
-import { mapActivityLevel, mapSlopeLevel } from "../../../utils/filter";
+import useUserStore from "../../../store/useUserStore";
+import { useCurrentLocation } from "../../../hooks/useCurrentLocation";
+import RouteLoading from "../../Walk/components/RouteLoading";
 
 const MissionDetail = () => {
   const { missionId } = useParams();
+  const { id: userId } = useUserStore();
+  const { myLocation } = useCurrentLocation();
 
-  const [_loading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
   const [mission, setMission] = useState<MissionsData | null>(null);
 
   const navigate = useNavigate();
-
-  const [activeLevel, setActiveLevel] = useState<string | null>(null);
-  const [slopeLevel, setSlopeLevel] = useState<string | null>(null);
-
-  const [isRestingPointOn, setIsRestingPoint] = useState<boolean>(false);
-  const [isNatureFriendly, setIsNatureFriendly] = useState<boolean>(false);
-  const [isPedestrianZone, setIsPedestrianZone] = useState<boolean>(false);
-
-  // 버튼 활성화 여부 판단 (활동량과 경사도가 모두 null이 아닐 때)
-  const isFormValid = activeLevel !== null && slopeLevel !== null;
 
   // API 호출 - 화면이 켜지면 실행
   useEffect(() => {
@@ -35,6 +28,7 @@ const MissionDetail = () => {
 
         // 미션 정보 가져오기
         const missionRes = await api.get(`/user-daily-missions/${missionId}`);
+        console.log(missionRes);
         setMission(missionRes.data);
       } catch (error) {
         console.error("데이터 로딩 실패:", error);
@@ -47,47 +41,47 @@ const MissionDetail = () => {
   }, []);
 
   // 미션 시작 버튼 클릭 함수
-  const handleStartMission = () => {
-    if (!isFormValid) return;
-    navigate(`/walk/preview/${mission?.collectionLocationId}`, {
-      state: {
-        destinationId: mission?.collectionLocationId,
-        isMission: true, // 미션에서 넘어왔다는 표시
-        missionId: missionId,
-        earnedReward: mission?.earnedReward,
-        filters: {
-          activityLevel: mapActivityLevel(activeLevel),
-          slopeLevel: mapSlopeLevel(slopeLevel),
-          includeRestPoints: isRestingPointOn,
-          natureFriendly: isNatureFriendly,
-          pedestrianOnly: isPedestrianZone,
-        },
-      },
-    });
-  };
+  const handleStartMission = async () => {
+    if (!userId || !myLocation) {
+      alert("사용자 정보나 현재 위치를 찾을 수 없습니다.");
+      return;
+    }
 
-  // 필터 버튼 선택
-  const renderFilterButtons = (
-    options: string[],
-    current: string | null,
-    setter: (val: string) => void,
-  ) => (
-    <div className="flex gap-1.5">
-      {options.map((option) => (
-        <button
-          key={option}
-          onClick={() => setter(option)}
-          className={`px-4 py-2 rounded-md text-body2_m_14 text-[#41464E] transition-colors duration-200 ${
-            current === option
-              ? "bg-cool-neutral-30 text-white"
-              : "bg-white ring-1 ring-inset ring-cool-neutral-70"
-          }`}
-        >
-          {option}
-        </button>
-      ))}
-    </div>
-  );
+    try {
+      setLoading(true);
+
+      // 백엔드 요청 바디 생성
+      const requestBody = {
+        userId: userId,
+        currentLatitude: myLocation.lat,
+        currentLongitude: myLocation.lng,
+        destinationIds: [mission?.collectionLocationId],
+        filter: {
+          activityLevel: "MODERATE",
+          includeRestPoints: true,
+          notifyEcoMart: true,
+        },
+      };
+
+      // POST 요청 보내기
+      const response = await api.post("/routes/generate", requestBody);
+
+      // 성공하면 받아온 데이터를 가지고 다음 페이지로 넘어감
+      navigate(`/walk/preview/${mission?.collectionLocationId}`, {
+        state: {
+          isMission: true, // 미션에서 넘어왔다는 표시
+          routeData: response.data,
+          binId: mission?.collectionLocationId,
+        },
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error("AI 경로 생성 실패:", error);
+      alert("맞춤 경로를 생성하는 데 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setLoading(false); // 로딩 종료
+    }
+  };
 
   return (
     <div className="px-5 h-dvh flex flex-col overflow-hidden">
@@ -97,138 +91,61 @@ const MissionDetail = () => {
       </header>
 
       {/* 메인 영역 */}
-      <div className="flex flex-col gap-5 pt-3 pb-5 overflow-hidden">
+      <div className="flex flex-col gap-5 pt-3 pb-5">
         {/* 미션 제목 */}
-        <section className="flex flex-col gap-1 shrink-0">
+        <section className="flex flex-col gap-1">
           <h4 className="text-primary text-caption1_m_13">
             {mission?.missionTitle}
           </h4>
           <h1 className="text-head1_sb_24">{mission?.missionDescription}</h1>
         </section>
 
-        {/* 미션 내용 */}
-        <section className="flex flex-col flex-1 gap-3 rounded-t-xl overflow-hidden overflow-y-auto no-scrollbar">
-          {/* 목적지, 거리, 보상 박스 */}
-          <div className="flex flex-col gap-5 p-4 bg-white rounded-xl shadow-card">
-            {/* 목적지, 거리 */}
-            <div className="flex flex-col gap-3">
-              {/* 목적지 영역 */}
-              <div className="flex justify-between">
-                <div className="flex items-center gap-1">
-                  <LocationIcon className="w-4 h-4 text-cool-neutral-60" />
-                  <span className="text-body1_m_16 text-cool-neutral-20">
-                    목적지
-                  </span>
-                </div>
-                <p className="text-body1_m_16 text-common-black">
-                  공릉보건지소
-                </p>
+        {/* 목적지, 거리 박스 */}
+        <div className="flex flex-col gap-5 p-4 bg-white rounded-xl shadow-card">
+          {/* 목적지, 거리 */}
+          <div className="flex flex-col gap-3">
+            {/* 목적지 영역 */}
+            <div className="flex justify-between">
+              <div className="flex items-center gap-1">
+                <LocationIcon className="w-4 h-4 text-cool-neutral-60" />
+                <span className="text-body1_m_16 text-cool-neutral-20">
+                  목적지
+                </span>
               </div>
-              {/* 거리 영역 */}
-              <div className="flex justify-between ">
-                <div className="flex items-center gap-1">
-                  <ClockIcon className="w-4 h-4 text-cool-neutral-60" />
-                  <span className="text-body1_m_16 text-cool-neutral-20">
-                    거리
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 justify-end text-body1_m_16">
-                  <span className=" text-common-black">
-                    {mission?.distanceMeters || 700}m
-                  </span>
-                  <span className="text-cool-neutral-60">
-                    도보 약 {mission?.walkingDistanceMeters || 20}분
-                  </span>
-                </div>
-              </div>
-            </div>
-            {/* 보상 영역 */}
-            <div className="bg-primary-extralight flex justify-between px-4 py-3 rounded-lg">
-              <p className="text-body1_m_16">폐의약품 수거 보상</p>
-              <p className="text-primary text-sub3_sb_16">
-                {(mission?.earnedReward || 3000).toLocaleString()} 원
+              <p className="text-body1_m_16 text-common-black">
+                {mission?.destinationName || ""}
               </p>
             </div>
-          </div>
-          {/* 필터 영역 */}
-          <div className="flex flex-col gap-5 px-4 py-2 mb-25 shadow-card bg-white rounded-xl">
-            {/* 건강 맞춤형 필터 */}
-            <div className="flex flex-col gap-4 py-3.5">
-              <h2 className="text-sub1_sb_18">건강 맞춤형 필터</h2>
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                  <h5 className="text-body2_m_14 text-[#202123]">활동량</h5>
-                  {renderFilterButtons(
-                    ["적당한", "활발한", "최대의"],
-                    activeLevel,
-                    setActiveLevel,
-                  )}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h5 className="text-body2_m_14 text-[#202123]">경사도</h5>
-                  {renderFilterButtons(
-                    ["완만한", "적당한", "가파른"],
-                    slopeLevel,
-                    setSlopeLevel,
-                  )}
-                </div>
-                <div className="flex justify-between items-center py-1">
-                  <p className="text-body2_m_14 text-[#202123]">
-                    휴식 포인트 배치
-                  </p>
-                  <ToggleButton
-                    isOn={isRestingPointOn}
-                    onToggle={() => setIsRestingPoint(!isRestingPointOn)}
-                  />
-                </div>
+            {/* 거리 영역 */}
+            <div className="flex justify-between ">
+              <div className="flex items-center gap-1">
+                <ClockIcon className="w-4 h-4 text-cool-neutral-60" />
+                <span className="text-body1_m_16 text-cool-neutral-20">
+                  거리
+                </span>
               </div>
-            </div>
-            {/* 환경 맞춤형 필터 */}
-            <div className="flex flex-col gap-4 py-3.5">
-              <h2 className="text-sub1_sb_18">환경 맞춤형 필터</h2>
-              <div className="flex flex-col gap-5">
-                {/* 자연 친화 */}
-                <div className="flex py-1 justify-between items-center">
-                  <div>
-                    <p className="text-body2_m_14 text-[#202123]">자연 친화</p>
-                    <p className="text-caption3_r_13 text-[#4E545D]">
-                      녹지율이 높은 경로를 우선순위로 둡니다.
-                    </p>
-                  </div>
-                  <ToggleButton
-                    isOn={isNatureFriendly}
-                    onToggle={() => setIsNatureFriendly(!isNatureFriendly)}
-                  />
-                </div>
-                {/* 보행자 전용 */}
-                <div className="flex py-1 justify-between items-center">
-                  <div>
-                    <p className="text-body2_m_14 text-[#202123]">
-                      보행자 전용
-                    </p>
-                    <p className="text-caption3_r_13 text-[#4E545D]">
-                      보행자 전용 도로의 안전한 길을 추천합니다.
-                    </p>
-                  </div>
-                  <ToggleButton
-                    isOn={isPedestrianZone}
-                    onToggle={() => setIsPedestrianZone(!isPedestrianZone)}
-                  />
-                </div>
+              <div className="flex items-center gap-1 justify-end text-body1_m_16">
+                <span className=" text-common-black">
+                  {mission?.distanceMeters || "0"}m
+                </span>
+                <span className="text-cool-neutral-60">
+                  도보 약 {mission?.walkingDistanceMeters || "0"}분
+                </span>
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </div>
       {/* 하단 고정 버튼 영역 */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-5 pt-7 pb-10 bg-linear-to-t from-white from-70% to-transparent">
         <button
           onClick={handleStartMission}
-          className={`w-full text-sub3_sb_16 rounded-lg py-4 ${isFormValid ? "bg-primary text-white" : "bg-cool-neutral-95 text-cool-neutral-70"}`}
+          className="w-full text-sub3_sb_16 rounded-lg py-4 bg-primary text-white"
         >
           미션 시작하기
         </button>
       </div>
+      {isLoading && <RouteLoading />}
     </div>
   );
 };

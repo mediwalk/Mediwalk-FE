@@ -129,39 +129,39 @@ const RoutePreview = () => {
 
   const handleAuthenticate = async () => {
     try {
-      let finalReward = 0;
-      if (state.isMission) {
-        await api.post(`/user-daily-missions/${state.missionId}/complete`, {
-          earnedReward: state.earnedReward || 3000,
-          currentLatitude: myLocation?.lat,
-          currentLongitude: myLocation?.lng,
-        });
-        finalReward = state.earnedReward || 3000;
-      } else {
-        await api.post("/events", {
-          userId: previewData?.userId || 1,
-          eventType: "MEDICINE_COLLECTION",
-          title: "폐의약품 수거",
-          rewardAmount: 100,
-          eventDateTime: new Date().toISOString(),
-          collectionLocationId: state?.binId || previewData?.destinationId,
-          routeId: previewData?.id,
-          currentLatitude: myLocation?.lat,
-          currentLongitude: myLocation?.lng,
-        });
-        finalReward = 100;
+      const proximityRes = await api.get(
+        `/user-daily-missions/${binId}/destination-proximity`,
+        {
+          params: {
+            currentLatitude: myLocation?.lat,
+            currentLongitude: myLocation?.lng,
+          },
+        },
+      );
+
+      // 반경 20m 이내가 아닐 경우 에러모달
+      if (!proximityRes.data.withinActivationRadius) {
+        setErrorMessage("목적지와 20m 이내로 접근한 후 다시 시도해주세요.");
+        setIsErrorModalOpen(true);
+        return;
       }
-      navigate("/complete", {
-        replace: true,
+
+      // 반경 검증 통과 시 카메라 페이지로 이동 (필요한 데이터 전부 전달)
+      navigate("/camera", {
+        replace: true, // 뒤로가기 방지
         state: {
-          reward: finalReward,
-          distance: previewData?.totalDistanceMeters || 0,
+          ...state,
+          routeData: previewData,
+          myLocation: myLocation,
         },
       });
     } catch (error: any) {
-      if (error.response?.data?.message)
+      console.error("거리 인증 실패:", error);
+      if (error.response?.data?.message) {
         setErrorMessage(error.response.data.message.replace(".", ".\n"));
-      else setErrorMessage("서버와 통신 중 문제가 발생했습니다.");
+      } else {
+        setErrorMessage("서버와 통신 중 문제가 발생했습니다.");
+      }
       setIsErrorModalOpen(true);
     }
   };

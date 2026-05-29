@@ -13,6 +13,7 @@ export interface MissionsData {
   id: number;
   missionId: number;
   collectionLocationId: number;
+  destinationName: string;
   status: string;
   earnedReward: number;
   missionTitle: string;
