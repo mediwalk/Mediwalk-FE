@@ -168,7 +168,15 @@ const RoutePreview = () => {
 
   const closeModal = () => setIsModalOpen(false);
   const closeErrorModal = () => setIsErrorModalOpen(false);
-  const confirmModal = () => navigate(`/walk/${binId}`);
+
+  // 미션 여부에 따라 재설정 시 돌아가는 경로 분기 처리
+  const confirmModal = () => {
+    if (state?.isMission) {
+      navigate("/home"); // 미션에서 넘어온 경우 홈 화면으로 이동
+    } else {
+      navigate(`/walk/${binId}`); // 일반 수거함에서 넘어온 경우 수거함 페이지로 이동
+    }
+  };
 
   const handlePointClick = (point: PointItem) => {
     if (point.lat && point.lng) {
