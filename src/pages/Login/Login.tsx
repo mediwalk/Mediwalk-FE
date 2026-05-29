@@ -44,7 +44,7 @@ const Login = () => {
     <main className="flex flex-col">
       <section className="flex flex-col mt-38.5 gap-4 px-5">
         <div className="w-13 h-13 flex items-center justify-center bg-primary/80 rounded-[10.83px]">
-          <PillLogo className="w-8 h-8" />
+          <PillLogo className="w-8 h-8 text-common-white" />
         </div>
         <div className="flex flex-col gap-3">
           <div className="text-[26px] font-bold text-common-black whitespace-pre-line leading-[140%] tracking-[-0.015em]">
