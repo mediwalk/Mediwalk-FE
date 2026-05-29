@@ -15,10 +15,6 @@ const DisposalComplete = () => {
   const todayAchievementName =
     eventData?.todayAchievementName || "초보 환경 지킴이";
 
-  const returnHome = () => {
-    navigate("/home");
-  };
-
   return (
     <div className="bg-background h-dvh flex flex-col items-center px-5">
       <header className="pt-6 pb-3 px-5 items-baseline shrink-0">
@@ -66,12 +62,15 @@ const DisposalComplete = () => {
 
         <div className="flex gap-2 w-full text-sub3_sb_16">
           <button
-            onClick={returnHome}
+            onClick={() => navigate("/home")}
             className="flex-1 py-4 bg-common-white text-primary border border-primary rounded-lg"
           >
             홈 화면으로
           </button>
-          <button className="flex-1 py-4 bg-primary text-common-white rounded-lg">
+          <button
+            onClick={() => navigate("/reward")}
+            className="flex-1 py-4 bg-primary text-common-white rounded-lg"
+          >
             리워드 환급받기
           </button>
         </div>
