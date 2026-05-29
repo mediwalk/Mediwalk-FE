@@ -112,8 +112,8 @@ const Reward = () => {
 
               return {
                 id: item.id,
-                title: isAccumulation ? "폐의약품 수거" : "리워드 환급",
-                status: item.accumulationCompleted ? "적립 완료" : "",
+                title: item.eventTitle,
+                status: "적립 완료",
                 date: formattedDate,
                 // 적립일 땐 locationName 우선, 환급일 땐 은행+계좌번호
                 location: isAccumulation

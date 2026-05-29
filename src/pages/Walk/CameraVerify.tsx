@@ -62,6 +62,7 @@ const CameraVerify = () => {
     canvas.height = video.videoHeight;
     context?.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+    // base64 문자열 추출
     const base64Image = canvas.toDataURL("image/jpeg").split(",")[1];
 
     try {
@@ -94,6 +95,7 @@ const CameraVerify = () => {
 
       mediaRecorder.onstop = async () => {
         setIsProcessing(true);
+
         const videoBlob = new Blob(chunksRef.current, { type: "video/webm" });
         const formData = new FormData();
         formData.append("video", videoBlob, "record.webm");
@@ -120,34 +122,48 @@ const CameraVerify = () => {
 
   // 결과 처리 후 이벤트(보상) 생성 및 리다이렉트
   const processVerificationResult = async (data: any) => {
-    const { status, message, imageUrl } = data;
+    const { status, message } = data;
 
     if (status === "VERIFIED") {
-      const routeData = state.routeData;
-      const reward = state.isMission ? state.earnedReward || 3000 : 100;
+      try {
+        const routeData = state.routeData;
 
-      const eventPayload = {
-        userId: routeData.userId || 1,
-        eventType: "MEDICINE_COLLECTION",
-        title: state.isMission ? "미션: 폐의약품 수거" : "폐의약품 수거",
-        rewardAmount: reward,
-        eventDateTime: new Date().toISOString(),
-        locationName: routeData.destinationName || "수거함",
-        collectionLocationId: routeData.destinationId,
-        imageUrl: imageUrl || "string",
-        routeId: routeData.id,
-        userDailyMissionId: state.isMission ? state.missionId : null,
-        currentLatitude: state.myLocation?.lat,
-        currentLongitude: state.myLocation?.lng,
-      };
+        // 미션일 때는 1000, 일반일 때는 state.baseRewardAmount
+        const reward = state.isMission ? 1000 : state.baseRewardAmount || 800;
 
-      await api.post("/events", eventPayload);
+        const eventPayload = {
+          userId: routeData.userId || 1,
+          eventType: state.isMission
+            ? "EXERCISE_MISSION_COMPLETE"
+            : "MEDICINE_COLLECTION",
+          title: state.isMission ? "운동 미션 완료" : "폐의약품 수거",
+          rewardAmount: reward,
+          eventDateTime: new Date().toISOString(),
+          locationName: routeData.destinationName || "수거함",
+          collectionLocationId: routeData.destinationId,
+          imageUrl: "string",
+          routeId: routeData.id,
+          userDailyMissionId: state.isMission
+            ? state.id || routeData.userDailyMissionId
+            : null,
+          currentLatitude: state.myLocation?.lat,
+          currentLongitude: state.myLocation?.lng,
+        };
 
-      navigate("/complete", {
-        replace: true,
-        state: { reward: reward, distance: routeData.totalDistanceMeters || 0 },
-      });
+        const eventRes = await api.post("/events", eventPayload);
+
+        // 완료 페이지로 이동
+        navigate("/complete", {
+          replace: true,
+          state: { eventData: eventRes.data },
+        });
+      } catch (error) {
+        console.error("이벤트 생성 실패:", error);
+        alert("인증은 완료되었으나 리워드 적립 중 오류가 발생했습니다.");
+        setIsProcessing(false);
+      }
     } else {
+      // 검증 실패 시 백엔드에서 전달한 message 띄움
       alert(`인증 실패: ${message}\n다시 촬영해주세요.`);
       setIsProcessing(false);
     }
@@ -169,7 +185,7 @@ const CameraVerify = () => {
         <CloseIcon className="w-6 h-6 text-white drop-shadow-md" />
       </button>
 
-      {/*  뷰파인더 영역 */}
+      {/* 뷰파인더 영역 */}
       <div className="absolute inset-0 w-full h-full">
         <video
           ref={videoRef}
