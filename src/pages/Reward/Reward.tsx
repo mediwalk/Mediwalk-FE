@@ -211,7 +211,10 @@ const Reward = () => {
               rewardMainData.rewardIncreaseRateComparedToLastMonth > 0
                 ? "+"
                 : ""}
-              {rewardMainData?.rewardIncreaseRateComparedToLastMonth || 0}%
+              {Math.round(
+                rewardMainData?.rewardIncreaseRateComparedToLastMonth || 0,
+              )}
+              %
             </div>
           </div>
 
@@ -226,7 +229,7 @@ const Reward = () => {
               </div>
               <div className="flex items-center justify-between">
                 <div className="text-sub1_sb_18 text-common-black">
-                  {rewardMainData?.totalCollectionsCount || 0} 회
+                  {rewardMainData?.yearlyMedicineCollectionCount} 회
                 </div>
                 <ArrowRightIcon className="w-5 h-5 text-[#6C727C]" />
               </div>

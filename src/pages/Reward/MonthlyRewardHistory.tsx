@@ -122,7 +122,7 @@ const MonthlyRewardHistory = () => {
           </div>
           <div className="text-body4_r_14 text-cool-neutral-40">
             지난 달 대비 {summary.increaseRate > 0 ? "+" : ""}
-            {summary.increaseRate}%
+            {Math.round(summary.increaseRate)}%
           </div>
         </section>
         <section className="flex flex-col flex-1 gap-2 min-h-0">
