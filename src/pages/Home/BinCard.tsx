@@ -1,6 +1,7 @@
 import ArrowIcon from "../../assets/icons/arrow2_right.svg?react";
 import LocationIcon from "../../assets/icons/location_fill.svg?react";
 import BulletIcon from "../../assets/icons/bullet.svg?react";
+import { formatDistance } from "../../utils/formatDistance";
 
 interface BinInfo {
   id: number;
@@ -36,7 +37,7 @@ const BinCard = ({ info, onClick }: BinCardProps) => {
         </div>
         <div className="flex gap-0.5 items-center">
           <span className="text-primary text-caption1_m_13">
-            {info.distance}m
+            {formatDistance(info.distance)}
           </span>
           <span>
             <BulletIcon className="text-[#7A8396] w-4 h-4" />

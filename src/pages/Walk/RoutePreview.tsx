@@ -13,6 +13,7 @@ import ConfirmModal from "../../components/ConfirmModal";
 import api from "../../api/axios";
 import ErrorModal from "../../components/ErrorModal";
 import type { RouteDataResponse, WalkContextType } from "./Walk";
+import { formatDistance } from "../../utils/formatDistance";
 
 const activityMap: Record<string, string> = {
   MODERATE: "적당한",
@@ -259,7 +260,7 @@ const RoutePreview = () => {
                 </h2>
                 <div className="flex gap-0.5 items-center">
                   <span className="text-primary text-caption1_m_13">
-                    총 {previewData?.totalDistanceMeters || 0}m{" "}
+                    총 {formatDistance(previewData?.totalDistanceMeters)}{" "}
                   </span>
                   <BulletIcon className="w-4 h-4 text-[#7A8396]" />
                   <span className="text-[#40444B] text-caption3_r_13">

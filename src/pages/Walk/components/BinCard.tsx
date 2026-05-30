@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import BulletIcon from "../../../assets/icons/bullet.svg?react";
 import ShineIcon from "../../../assets/icons/ai_fill.svg?react";
 import type { BinLocationData } from "../Walk";
+import { formatDistance } from "../../../utils/formatDistance";
 
 interface BinCardProps {
   info: BinLocationData;
@@ -29,7 +30,7 @@ export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
       </div>
       <div className="flex gap-0.5 items-center">
         <span className="text-primary text-caption1_m_13">
-          {info.distanceMeters}m
+          {formatDistance(info.distanceMeters)}
         </span>
         <BulletIcon className="text-[#7A8396] w-4 h-4" />
         <span className="text-caption3_r_13 text-[#6C727C]">

@@ -1,6 +1,7 @@
 import CheckIcon from "../../assets/icons/check_fill.svg?react";
 import BulletIcon from "../../assets/icons/bullet.svg?react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { formatDistance } from "../../utils/formatDistance";
 
 const DisposalComplete = () => {
   const navigate = useNavigate();
@@ -46,9 +47,7 @@ const DisposalComplete = () => {
                 <BulletIcon className="w-4 h-4 text-neutral-30" />
                 <span className="text-common-black">오늘의 운동</span>
               </div>
-              <div>
-                {todayWalkingDistanceMeters.toLocaleString()}m 산책 완료
-              </div>
+              <div>{formatDistance(todayWalkingDistanceMeters)} 산책 완료</div>
             </div>
             <div className="flex justify-between">
               <div className="flex gap-0.5 items-center">
