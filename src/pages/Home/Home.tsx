@@ -19,7 +19,7 @@ export interface MissionsData {
   missionTitle: string;
   missionDescription: string;
   distanceMeters: number;
-  walkingDistanceMeters: number;
+  estimatedWalkTimeMinutes: number;
 }
 
 interface BinLocationData {
@@ -82,6 +82,8 @@ const Home = () => {
           params: {
             userId: id,
             missionDate: today,
+            currentLatitude: myLocation.lat,
+            currentLongitude: myLocation.lng,
           },
         });
         setMissions(missionRes.data);
