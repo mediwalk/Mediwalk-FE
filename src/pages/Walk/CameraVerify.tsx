@@ -131,7 +131,7 @@ const CameraVerify = () => {
 
   // 결과 처리 후 이벤트(보상) 생성 및 리다이렉트
   const processVerificationResult = async (data: any) => {
-    const { status, message } = data;
+    const { status } = data;
 
     if (status === "VERIFIED") {
       try {
