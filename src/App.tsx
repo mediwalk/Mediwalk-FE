@@ -60,7 +60,7 @@ function Layout() {
                 {/* /walk/preview/:binId 진입 시: 특정 수거함까지의 경로 */}
                 <Route path="preview/:binId" element={<RoutePreview />} />
               </Route>
-              <Route path="/walk/filter/:binId" element={<RouteFilter />} />
+              <Route path="/walk/filter" element={<RouteFilter />} />
               <Route path="/camera" element={<CameraVerify />} />
               <Route path="/complete" element={<DisposalComplete />} />
 

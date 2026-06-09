@@ -1,6 +1,4 @@
-import { useNavigate } from "react-router-dom";
 import BulletIcon from "../../../assets/icons/bullet.svg?react";
-import ShineIcon from "../../../assets/icons/ai_fill.svg?react";
 import type { BinLocationData } from "../Walk";
 import { formatDistance } from "../../../utils/formatDistance";
 
@@ -10,13 +8,9 @@ interface BinCardProps {
   onClick: () => void;
 }
 
-export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
-  const navigate = useNavigate();
+export default function BinCard({ info, isSelected }: BinCardProps) {
   return (
-    <div
-      onClick={onClick}
-      className={`p-4 mx-2 rounded-2xl flex flex-col gap-2 shadow-card ${isSelected ? "bg-primary-extralight border border-primary" : "bg-white"}`}
-    >
+    <div className="p-4 mx-2 rounded-2xl flex flex-col gap-2 shadow-card ">
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <p className="text-sub3_sb_16 text-[#31353B]">{info.name}</p>
@@ -41,15 +35,6 @@ export default function BinCard({ info, isSelected, onClick }: BinCardProps) {
           {info.estimatedSteps}보
         </span>
       </div>
-      {isSelected && (
-        <button
-          onClick={() => navigate(`/walk/filter/${info.id}`)}
-          className="w-full py-3 mt-1 text-sub4_sb_14 bg-primary text-white rounded-lg flex justify-center items-center gap-1.5"
-        >
-          <ShineIcon className="text-white w-4 h-4" />
-          <span>AI 맞춤 경로 디자인</span>
-        </button>
-      )}
     </div>
   );
 }
