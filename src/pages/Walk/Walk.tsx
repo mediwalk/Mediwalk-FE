@@ -117,7 +117,7 @@ const Walk = () => {
           params: {
             latitude: myLocation.lat,
             longitude: myLocation.lng,
-            radiusKm: 2,
+            radiusKm: 3,
           },
         });
         setBins(binRes.data);
