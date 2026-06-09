@@ -1,8 +1,9 @@
 import { motion, useDragControls, type PanInfo } from "framer-motion";
 import { useEffect, useState } from "react";
 import BinCard from "./components/BinCard";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import type { WalkContextType } from "./Walk";
+import ShineIcon from "../../../src/assets/icons/ai_fill.svg?react";
 
 export default function BottomSheet() {
   // 부모(Walk)가 내려준 데이터 몽땅 꺼내기
@@ -16,6 +17,7 @@ export default function BottomSheet() {
   } = useOutletContext<WalkContextType>();
 
   const { binId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (binId) {
@@ -110,20 +112,41 @@ export default function BottomSheet() {
                 수거함을 찾고 있어요...
               </div>
             ) : (
-              bins?.map((bin) => (
-                <BinCard
-                  key={bin.id}
-                  info={bin}
-                  onClick={() => {
-                    if (bin.id === selectedBinId) {
-                      setSelectedBinId(null);
-                    } else {
-                      setSelectedBinId(bin.id);
-                    }
-                  }}
-                  isSelected={selectedBinId === bin.id}
-                />
-              ))
+              <>
+                {/* 1. AI 맞춤형 추천 카드 */}
+                <div className="p-4 mx-2 rounded-2xl flex flex-col gap-2 shadow-card bg-primary-extralight border border-primary">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sub3_sb_16 text-[#31353B]">
+                      맞춤형 산책 경로 추천
+                    </p>
+                    <p className="text-caption3_r_13 text-[#6C727C]">
+                      원하시는 활동량에 따른 경로를 추천해드릴게요.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => navigate("/walk/filter")}
+                    className="w-full py-3 mt-1 text-sub4_sb_14 bg-primary text-white rounded-lg flex justify-center items-center gap-1.5"
+                  >
+                    <ShineIcon className="text-white w-4 h-4" />
+                    <span>AI 맞춤 경로 디자인</span>
+                  </button>
+                </div>
+
+                {bins?.map((bin) => (
+                  <BinCard
+                    key={bin.id}
+                    info={bin}
+                    onClick={() => {
+                      if (bin.id === selectedBinId) {
+                        setSelectedBinId(null);
+                      } else {
+                        setSelectedBinId(bin.id);
+                      }
+                    }}
+                    isSelected={selectedBinId === bin.id}
+                  />
+                ))}
+              </>
             )}
           </div>
         </div>

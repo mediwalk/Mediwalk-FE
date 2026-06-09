@@ -10,7 +10,7 @@ export default defineConfig({
     proxy: {
       // /api로 시작하는 요청은 백엔드로 전달
       "/api": {
-        target: "http://15.164.211.109:8080",
+        target: "http://localhost:8080",
         changeOrigin: true,
       },
     },
