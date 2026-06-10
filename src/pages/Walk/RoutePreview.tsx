@@ -27,6 +27,7 @@ interface PointItem {
   desc: string;
   lat?: number;
   lng?: number;
+  distanceFromStart: number; // 정렬을 위한 출발지로부터의 누적 거리 기준 추가
 }
 
 const RoutePreview = () => {
@@ -69,16 +70,24 @@ const RoutePreview = () => {
 
       const points: PointItem[] = [];
 
+      // 휴식 포인트: order 순으로 distanceFromPrevious를 누적합산하여 거리를 구함
       if (data.restPoints?.length > 0) {
-        points.push(
-          ...data.restPoints.map((p, index) => ({
+        const sortedRestPoints = [...data.restPoints].sort(
+          (a, b) => a.order - b.order,
+        );
+        let cumulativeDistance = 0;
+
+        sortedRestPoints.forEach((p, index) => {
+          cumulativeDistance += p.distanceFromPrevious || 0;
+          points.push({
             id: `rest-${p.id || index}`,
             title: p.name || "휴식 포인트",
             desc: p.instruction || "근처 벤치에서 잠시 쉬어가세요.",
             lat: p.latitude,
             lng: p.longitude,
-          })),
-        );
+            distanceFromStart: cumulativeDistance,
+          });
+        });
       }
 
       if (data.martSuggestionsAlongRoute?.length > 0) {
@@ -89,6 +98,7 @@ const RoutePreview = () => {
             desc: "산책 중 들러서 건강한 저당 식품을 구경해 보세요.",
             lat: p.latitude,
             lng: p.longitude,
+            distanceFromStart: p.approxAlongRouteMeters || 0,
           })),
         );
       }
@@ -101,6 +111,7 @@ const RoutePreview = () => {
             desc: "공원을 가로지르며 상쾌하게 걸어보세요.",
             lat: p.latitude,
             lng: p.longitude,
+            distanceFromStart: p.approxAlongRouteMeters || 0,
           })),
         );
       }
@@ -113,8 +124,12 @@ const RoutePreview = () => {
           desc: "목적지에 도착했어요! 오늘도 메디워크와 함께 지구를 지키는 운동을 완료했어요.",
           lat: destBin?.latitude,
           lng: destBin?.longitude,
+          distanceFromStart: data.totalDistanceMeters || 999999,
         });
       }
+
+      // 출발지로부터의 거리를 기준으로 오름차순 정렬
+      points.sort((a, b) => a.distanceFromStart - b.distanceFromStart);
 
       setCombinedPoints(points);
     }
