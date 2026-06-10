@@ -129,6 +129,7 @@ export default function MyGoogleMap({
     if (map) {
       map.panTo(currentPosition);
       map.setZoom(17);
+      map.setHeading(0);
       setIsTracking(true);
     }
   }, [map, currentPosition]);
@@ -156,7 +157,13 @@ export default function MyGoogleMap({
         mapContainerStyle={containerStyle}
         center={initialCenter}
         zoom={17}
-        options={{ disableDefaultUI: true }}
+        options={{
+          disableDefaultUI: true,
+          mapId: import.meta.env.VITE_GOOGLE_MAPS_MAP_ID, // ← 벡터 맵 ID
+          headingInteractionEnabled: true, // 지도 회전
+          tiltInteractionEnabled: false, // 기울이기
+          gestureHandling: "greedy", // 한 손가락 이동
+        }}
         onLoad={(map) => {
           setMap(map);
           map.panTo(currentPosition);
