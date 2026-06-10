@@ -6,7 +6,6 @@ import type { WalkContextType } from "./Walk";
 import ShineIcon from "../../../src/assets/icons/ai_fill.svg?react";
 
 export default function BottomSheet() {
-  // 부모(Walk)가 내려준 데이터 몽땅 꺼내기
   const {
     sheetState,
     setSheetState,
@@ -14,6 +13,7 @@ export default function BottomSheet() {
     loading,
     selectedBinId,
     setSelectedBinId,
+    myLocation,
   } = useOutletContext<WalkContextType>();
 
   const { binId } = useParams();
@@ -26,21 +26,17 @@ export default function BottomSheet() {
     }
   }, [binId, setSheetState]);
 
-  // 화면 높이 계산
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   useEffect(() => {
     setWindowHeight(window.innerHeight);
   }, []);
 
-  // 위치 상수 정의
-  // Header(64px) + Map(55%)를 고려했을 때 바텀시트의 시작 위치
   const TOP_Y = 80;
-  const MIDDLE_Y = windowHeight * 0.6; // 화면의 60% 지점부터 시작
-  const BOTTOM_Y = windowHeight - 105; // 바닥
+  const MIDDLE_Y = windowHeight * 0.6;
+  const BOTTOM_Y = windowHeight - 105;
 
   const controls = useDragControls();
 
-  // 현재 상태에 따른 Y값 반환
   const getTargetY = () => {
     switch (sheetState) {
       case "expanded":
@@ -54,17 +50,13 @@ export default function BottomSheet() {
     }
   };
 
-  // 드래그 종료 시 상태 업데이트
   const handleDragEnd = (_: any, info: PanInfo) => {
     const offset = info.offset.y;
 
-    // 위로 드래그
     if (offset < -50) {
       if (sheetState === "collapsed") setSheetState("half");
       else if (sheetState === "half") setSheetState("expanded");
-    }
-    // 아래로 드래그
-    else if (offset > 50) {
+    } else if (offset > 50) {
       if (sheetState === "expanded") setSheetState("half");
       else if (sheetState === "half") setSheetState("collapsed");
     }
@@ -73,7 +65,7 @@ export default function BottomSheet() {
   return (
     <motion.div
       initial={{ y: MIDDLE_Y }}
-      animate={{ y: getTargetY() }} // 부모 상태에 따라 위치 이동
+      animate={{ y: getTargetY() }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
       className="fixed flex flex-col top-0 left-0 right-0 bg-white w-full max-w-md mx-auto z-40 h-dvh rounded-t-3xl"
       drag="y"
@@ -83,7 +75,6 @@ export default function BottomSheet() {
       dragElastic={0.1}
       onDragEnd={handleDragEnd}
     >
-      {/* 회색 바 */}
       <div
         onPointerDown={(e) => controls.start(e)}
         className="flex justify-center py-3 cursor-grab active:cursor-grabbing touch-none"
@@ -91,9 +82,7 @@ export default function BottomSheet() {
         <div className="w-15 h-1 bg-[#C3C7CE] rounded-full" />
       </div>
 
-      {/* 내부 콘텐츠 영역 */}
       <div className="flex flex-col h-full overflow-hidden">
-        {/* 3번 영역: 근처 폐의약품 수거함 리스트 */}
         <div className="flex flex-col flex-1 px-3 py-4 gap-3 min-h-0">
           <div className="flex flex-col gap-1 mx-2">
             <div className="text-title1_sb_20">
@@ -113,7 +102,6 @@ export default function BottomSheet() {
               </div>
             ) : (
               <>
-                {/* 1. AI 맞춤형 추천 카드 */}
                 <div className="p-4 mx-2 rounded-2xl flex flex-col gap-2 shadow-card bg-primary-extralight border border-primary">
                   <div className="flex flex-col gap-1">
                     <p className="text-sub3_sb_16 text-[#31353B]">
@@ -126,7 +114,10 @@ export default function BottomSheet() {
                   <button
                     onClick={() =>
                       navigate("/walk/filter", {
-                        state: { destinationIds: bins.map((bin) => bin.id) },
+                        state: {
+                          destinationIds: bins.map((bin) => bin.id),
+                          myLocation: myLocation,
+                        },
                       })
                     }
                     className="w-full py-3 mt-1 text-sub4_sb_14 bg-primary text-white rounded-lg flex justify-center items-center gap-1.5"
@@ -148,6 +139,7 @@ export default function BottomSheet() {
                       }
                     }}
                     isSelected={selectedBinId === bin.id}
+                    myLocation={myLocation!}
                   />
                 ))}
               </>

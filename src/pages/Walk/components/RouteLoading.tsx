@@ -1,8 +1,9 @@
+import { createPortal } from "react-dom";
 import PillIcon from "../../../assets/icons/pill_logo.svg?react";
 
 const RouteLoading = () => {
-  return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-100 flex flex-col max-w-md mx-auto left-0 right-0 items-center justify-center bg-white/80 backdrop-blur-sm animate-fade-in">
       <div className="flex flex-col items-center text-center gap-3 animate-pulse">
         <PillIcon className="w-17 h-17 text-primary m-4" />
         <div className="flex flex-col gap-2.5">
@@ -14,7 +15,8 @@ const RouteLoading = () => {
           </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

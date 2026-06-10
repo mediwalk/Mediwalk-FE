@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import ArrowIcon from "../../assets/icons/arrow1_left.svg?react";
 import ToggleButton from "../../components/ToggleButton";
@@ -6,18 +6,16 @@ import CoffeeIcon from "../../assets/icons/tea_fill.svg?react";
 import ShoesIcon from "../../assets/icons/shoe_fill.svg?react";
 import FireIcon from "../../assets/icons/fire_fill.svg?react";
 import useUserStore from "../../store/useUserStore";
-import { useCurrentLocation } from "../../hooks/useCurrentLocation";
 import api from "../../api/axios";
 import RouteLoading from "./components/RouteLoading";
 
 const RouteFilter = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { binId } = useParams();
   const { id: userId } = useUserStore();
-  const { myLocation } = useCurrentLocation();
 
   const destinationIds: number[] = location.state?.destinationIds || [];
+  const myLocation = location.state?.myLocation;
 
   // 현재 스텝 관리 (1 또는 2)
   const [step, setStep] = useState<1 | 2>(1);
@@ -74,10 +72,10 @@ const RouteFilter = () => {
       const response = await api.post("/routes/generate", requestBody);
 
       // 성공하면 받아온 데이터를 가지고 다음 페이지로 넘어감
-      navigate(`/walk/preview/${binId}`, {
+      navigate(`/walk/preview/${response.data.destinationId}`, {
         state: {
           routeData: response.data,
-          binId: binId,
+          binId: response.data.destinationId,
         },
       });
       console.log(response.data);
@@ -94,19 +92,19 @@ const RouteFilter = () => {
     {
       id: "MODERATE",
       title: "적당히 걷고 싶어요",
-      desc: "약 2천 보로, 20분 가량 소요돼요",
+      desc: "약 700보로, 10분 가량 소요돼요",
       icon: <CoffeeIcon className="w-7 h-7 text-primary" />,
     },
     {
       id: "ACTIVE",
       title: "활발하게 걷고 싶어요",
-      desc: "약 4천 보로, 40분 가량 소요돼요",
+      desc: "약 1500보로, 15분 가량 소요돼요",
       icon: <ShoesIcon className="w-7 h-7 text-primary" />,
     },
     {
       id: "MAXIMUM",
       title: "최대치로 걷고 싶어요",
-      desc: "약 6천 보로, 1시간 가량 소요돼요",
+      desc: "약 3000보로, 30분 가량 소요돼요",
       icon: <FireIcon className="w-7 h-7 text-primary" />,
     },
   ];

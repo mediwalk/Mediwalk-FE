@@ -5,7 +5,6 @@ import api from "../../api/axios";
 import { useCurrentLocation } from "../../hooks/useCurrentLocation";
 import Header from "../../components/Header";
 
-// 백엔드 응답 타입 정의
 export interface PointSuggestion {
   poiKey: string;
   name: string;
@@ -58,6 +57,7 @@ export interface BinLocationData {
   longitude: number;
   distanceMeters: number;
   walkingDistanceMeters: number;
+  estimatedWalkTimeMinutes: number;
   estimatedSteps: number;
 }
 
@@ -106,6 +106,16 @@ const Walk = () => {
     lat: number;
     lng: number;
   } | null>(null);
+
+  useEffect(() => {
+    if (!binId && !isPreview) {
+      setSelectedBinId(null);
+      setSheetState("half");
+      setRoutePolyline(null);
+      setRouteData(null);
+      setFocusedLocation(null);
+    }
+  }, [binId, isPreview]);
 
   useEffect(() => {
     if (isLocating || !myLocation) return;

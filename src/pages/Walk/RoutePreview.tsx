@@ -175,7 +175,7 @@ const RoutePreview = () => {
     if (state?.isMission) {
       navigate("/home"); // 미션에서 넘어온 경우 홈 화면으로 이동
     } else {
-      navigate(`/walk/${binId}`); // 일반 수거함에서 넘어온 경우 수거함 페이지로 이동
+      navigate(`/walk`);
     }
   };
 
