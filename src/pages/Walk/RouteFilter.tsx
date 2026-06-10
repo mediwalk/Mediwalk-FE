@@ -94,19 +94,19 @@ const RouteFilter = () => {
     {
       id: "MODERATE",
       title: "적당히 걷고 싶어요",
-      desc: "약 2천 보로, 20분 가량 소요돼요",
+      desc: "약 700보로, 10분 가량 소요돼요",
       icon: <CoffeeIcon className="w-7 h-7 text-primary" />,
     },
     {
       id: "ACTIVE",
       title: "활발하게 걷고 싶어요",
-      desc: "약 4천 보로, 40분 가량 소요돼요",
+      desc: "약 1500보로, 15분 가량 소요돼요",
       icon: <ShoesIcon className="w-7 h-7 text-primary" />,
     },
     {
       id: "MAXIMUM",
       title: "최대치로 걷고 싶어요",
-      desc: "약 6천 보로, 1시간 가량 소요돼요",
+      desc: "약 3000보로, 30분 가량 소요돼요",
       icon: <FireIcon className="w-7 h-7 text-primary" />,
     },
   ];
