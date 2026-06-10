@@ -27,7 +27,7 @@ interface PointItem {
   desc: string;
   lat?: number;
   lng?: number;
-  distanceFromStart: number; // 정렬을 위한 출발지로부터의 누적 거리 기준 추가
+  distanceFromStart: number;
 }
 
 const RoutePreview = () => {
@@ -62,7 +62,7 @@ const RoutePreview = () => {
 
   useEffect(() => {
     if (state && state.routeData) {
-      const data: RouteDataResponse = state.routeData;
+      const data: any = state.routeData;
       setPreviewData(data);
       setRouteData(data);
 
@@ -70,8 +70,16 @@ const RoutePreview = () => {
 
       const points: PointItem[] = [];
 
-      // 휴식 포인트: order 순으로 distanceFromPrevious를 누적합산하여 거리를 구함
-      if (data.restPoints?.length > 0) {
+      const hasRestPoints = data.restPoints?.length > 0;
+      const hasMarts = data.martSuggestionsAlongRoute?.length > 0;
+      const hasParks = data.parkSuggestionsAlongRoute?.length > 0;
+      const useSegments =
+        !hasRestPoints &&
+        !hasMarts &&
+        !hasParks &&
+        data.routeSegments?.length > 0;
+
+      if (hasRestPoints) {
         const sortedRestPoints = [...data.restPoints].sort(
           (a, b) => a.order - b.order,
         );
@@ -90,9 +98,9 @@ const RoutePreview = () => {
         });
       }
 
-      if (data.martSuggestionsAlongRoute?.length > 0) {
+      if (hasMarts) {
         points.push(
-          ...data.martSuggestionsAlongRoute.map((p, index) => ({
+          ...data.martSuggestionsAlongRoute.map((p: any, index: number) => ({
             id: `mart-${p.poiKey || index}`,
             title: p.name || "추천 마트",
             desc: "산책 중 들러서 건강한 저당 식품을 구경해 보세요.",
@@ -103,9 +111,9 @@ const RoutePreview = () => {
         );
       }
 
-      if (data.parkSuggestionsAlongRoute?.length > 0) {
+      if (hasParks) {
         points.push(
-          ...data.parkSuggestionsAlongRoute.map((p, index) => ({
+          ...data.parkSuggestionsAlongRoute.map((p: any, index: number) => ({
             id: `park-${p.poiKey || index}`,
             title: p.name || "추천 공원",
             desc: "공원을 가로지르며 상쾌하게 걸어보세요.",
@@ -116,19 +124,44 @@ const RoutePreview = () => {
         );
       }
 
-      const destBin = bins.find((b) => b.id === data.destinationId);
-      if (data.destinationName) {
-        points.push({
-          id: "destination",
-          title: data.destinationName,
-          desc: "목적지에 도착했어요! 오늘도 메디워크와 함께 지구를 지키는 운동을 완료했어요.",
-          lat: destBin?.latitude,
-          lng: destBin?.longitude,
-          distanceFromStart: data.totalDistanceMeters || 999999,
-        });
+      if (useSegments) {
+        points.push(
+          ...data.routeSegments.map((segment: any, index: number) => {
+            const isDestination = segment.type === "DESTINATION";
+            const destBin = isDestination
+              ? bins.find((b) => b.id === data.destinationId)
+              : null;
+
+            return {
+              id: isDestination
+                ? "destination"
+                : `segment-${segment.segmentIndex || index}`,
+              title: isDestination
+                ? segment.name || data.destinationName
+                : "경로 안내",
+              desc: segment.instruction || "",
+              lat: isDestination ? destBin?.latitude : undefined,
+              lng: isDestination ? destBin?.longitude : undefined,
+              distanceFromStart: isDestination
+                ? 999999
+                : segment.segmentIndex || index,
+            };
+          }),
+        );
+      } else {
+        const destBin = bins.find((b) => b.id === data.destinationId);
+        if (data.destinationName) {
+          points.push({
+            id: "destination",
+            title: data.destinationName,
+            desc: "목적지에 도착했어요! 오늘도 메디워크와 함께 지구를 지키는 운동을 완료했어요.",
+            lat: destBin?.latitude,
+            lng: destBin?.longitude,
+            distanceFromStart: data.totalDistanceMeters || 999999,
+          });
+        }
       }
 
-      // 출발지로부터의 거리를 기준으로 오름차순 정렬
       points.sort((a, b) => a.distanceFromStart - b.distanceFromStart);
 
       setCombinedPoints(points);
@@ -155,16 +188,14 @@ const RoutePreview = () => {
         },
       );
 
-      // 반경 20m 이내가 아닐 경우 에러모달
       if (!proximityRes.data.withinActivationRadius) {
         setErrorMessage("목적지 20m 이내에서 다시 시도해주세요.");
         setIsErrorModalOpen(true);
         return;
       }
 
-      // 반경 검증 통과 시 카메라 페이지로 이동 (필요한 데이터 전부 전달)
       navigate("/camera", {
-        replace: true, // 뒤로가기 방지
+        replace: true,
         state: {
           ...state,
           routeData: previewData,
@@ -185,10 +216,9 @@ const RoutePreview = () => {
   const closeModal = () => setIsModalOpen(false);
   const closeErrorModal = () => setIsErrorModalOpen(false);
 
-  // 미션 여부에 따라 재설정 시 돌아가는 경로 분기 처리
   const confirmModal = () => {
     if (state?.isMission) {
-      navigate("/home"); // 미션에서 넘어온 경우 홈 화면으로 이동
+      navigate("/home");
     } else {
       navigate(`/walk`);
     }
