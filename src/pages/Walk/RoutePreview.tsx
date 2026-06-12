@@ -27,7 +27,6 @@ interface PointItem {
   desc: string;
   lat?: number;
   lng?: number;
-  distanceFromStart: number;
 }
 
 const RoutePreview = () => {
@@ -69,85 +68,66 @@ const RoutePreview = () => {
 
       const points: PointItem[] = [];
 
-      const hasRestPoints = data.restPoints?.length > 0;
-      const hasMarts = data.martSuggestionsAlongRoute?.length > 0;
-      const hasParks = data.parkSuggestionsAlongRoute?.length > 0;
-      const useSegments =
-        !hasRestPoints &&
-        !hasMarts &&
-        !hasParks &&
-        data.routeSegments?.length > 0;
-
-      if (hasRestPoints) {
-        const sortedRestPoints = [...data.restPoints].sort(
-          (a, b) => a.order - b.order,
-        );
-        let cumulativeDistance = 0;
-
-        sortedRestPoints.forEach((p, index) => {
-          cumulativeDistance += p.distanceFromPrevious || 0;
-          points.push({
-            id: `rest-${p.id || index}`,
-            title: p.name || "휴식 포인트",
-            desc: p.instruction || "근처 벤치에서 잠시 쉬어가세요.",
-            lat: p.latitude,
-            lng: p.longitude,
-            distanceFromStart: cumulativeDistance,
-          });
-        });
-      }
-
-      if (hasMarts) {
-        points.push(
-          ...data.martSuggestionsAlongRoute.map((p: any, index: number) => ({
-            id: `mart-${p.poiKey || index}`,
-            title: p.name || "추천 마트",
-            desc: "산책 중 들러서 건강한 저당 식품을 구경해 보세요.",
-            lat: p.latitude,
-            lng: p.longitude,
-            distanceFromStart: p.approxAlongRouteMeters || 0,
-          })),
-        );
-      }
-
-      if (hasParks) {
-        points.push(
-          ...data.parkSuggestionsAlongRoute.map((p: any, index: number) => ({
-            id: `park-${p.poiKey || index}`,
-            title: p.name || "추천 공원",
-            desc: "공원을 가로지르며 상쾌하게 걸어보세요.",
-            lat: p.latitude,
-            lng: p.longitude,
-            distanceFromStart: p.approxAlongRouteMeters || 0,
-          })),
-        );
-      }
-
-      if (useSegments) {
+      // 백엔드에서 내려준 routeSegments 배열을 순서대로 순회
+      if (data.routeSegments && data.routeSegments.length > 0) {
         points.push(
           ...data.routeSegments.map((segment: any, index: number) => {
-            const isDestination = segment.type === "DESTINATION";
-            const destBin = isDestination
-              ? bins.find((b) => b.id === data.destinationId)
-              : null;
+            let lat, lng;
+            let title = segment.name;
+            let desc = segment.instruction;
+
+            // 1. 경로 안내
+            if (segment.type === "ROUTE_GUIDE") {
+              title = "경로 안내";
+            }
+            // 2. 추천 마트 (martSuggestionsAlongRoute에서 좌표 매칭)
+            else if (segment.type === "MARKET") {
+              const matchedMart = data.martSuggestionsAlongRoute?.find(
+                (m: any) => m.name === segment.name,
+              );
+              lat = matchedMart?.latitude;
+              lng = matchedMart?.longitude;
+              desc = desc || "산책 중 들러서 건강한 저당 식품을 구경해 보세요.";
+            }
+            // 3. 추천 공원 (parkSuggestionsAlongRoute에서 좌표 매칭)
+            else if (segment.type === "PARK") {
+              const matchedPark = data.parkSuggestionsAlongRoute?.find(
+                (p: any) => p.name === segment.name,
+              );
+              lat = matchedPark?.latitude;
+              lng = matchedPark?.longitude;
+              desc = desc || "공원을 가로지르며 상쾌하게 걸어보세요.";
+            }
+            // 4. 휴식 포인트 (restPoints에서 좌표 매칭)
+            else if (segment.type?.includes("REST")) {
+              const matchedRest = data.restPoints?.find(
+                (r: any) => r.name === segment.name,
+              );
+              lat = matchedRest?.latitude;
+              lng = matchedRest?.longitude;
+              desc = desc || "근처 벤치에서 잠시 쉬어가세요.";
+            }
+            // 5. 목적지 (bins에서 좌표 매칭)
+            else if (segment.type === "DESTINATION") {
+              const destBin = bins.find((b) => b.id === data.destinationId);
+              lat = destBin?.latitude;
+              lng = destBin?.longitude;
+              desc =
+                desc ||
+                "목적지에 도착했어요! 오늘도 메디워크와 함께 지구를 지키는 운동을 완료했어요.";
+            }
 
             return {
-              id: isDestination
-                ? "destination"
-                : `segment-${segment.segmentIndex || index}`,
-              title: isDestination
-                ? segment.name || data.destinationName
-                : "경로 안내",
-              desc: segment.instruction || "",
-              lat: isDestination ? destBin?.latitude : undefined,
-              lng: isDestination ? destBin?.longitude : undefined,
-              distanceFromStart: isDestination
-                ? 999999
-                : segment.segmentIndex || index,
+              id: `segment-${segment.segmentIndex || index}`,
+              title: title,
+              desc: desc,
+              lat: lat,
+              lng: lng,
             };
           }),
         );
       } else {
+        // 만약 예외적으로 routeSegments가 비어있을 경우 목적지만 띄우기 (방어 코드)
         const destBin = bins.find((b) => b.id === data.destinationId);
         if (data.destinationName) {
           points.push({
@@ -156,12 +136,9 @@ const RoutePreview = () => {
             desc: "목적지에 도착했어요! 오늘도 메디워크와 함께 지구를 지키는 운동을 완료했어요.",
             lat: destBin?.latitude,
             lng: destBin?.longitude,
-            distanceFromStart: data.totalDistanceMeters || 999999,
           });
         }
       }
-
-      points.sort((a, b) => a.distanceFromStart - b.distanceFromStart);
 
       setCombinedPoints(points);
     }
@@ -348,14 +325,19 @@ const RoutePreview = () => {
                       onClick={() => handlePointClick(point)}
                     >
                       <div className="flex flex-col items-center">
-                        <div className="w-4 h-4 rounded-full border-[1.4px] border-[#97A2B8] bg-[#F3F7FF] z-10 shrink-0" />
+                        {/* 💡 경로안내(좌표없음)인 경우 아이콘 스타일을 살짝 다르게 표시하거나 동일하게 유지 가능합니다 */}
+                        <div
+                          className={`w-4 h-4 rounded-full border-[1.4px] ${point.lat ? "border-primary bg-primary-extralight" : "border-[#97A2B8] bg-[#F3F7FF]"} z-10 shrink-0`}
+                        />
                         {!isLast && (
                           <div className="w-0.5 h-full border-l border-dashed border-[#97A2B8]" />
                         )}
                       </div>
                       <div className="pb-8 flex flex-col gap-1.5">
                         <div className="flex items-center gap-1 text-[#6C727C] text-caption1_m_13">
-                          <LocationIcon className="w-4 h-4 text-primary" />
+                          {point.lat && (
+                            <LocationIcon className="w-4 h-4 text-primary" />
+                          )}
                           {point.title}
                         </div>
                         <p className="text-body1_m_16 text-[#202123]">
