@@ -138,7 +138,7 @@ const CameraVerify = () => {
         const routeData = state.routeData;
 
         // 미션일 때는 1000, 일반일 때는 state.baseRewardAmount
-        const reward = state.isMission ? 1000 : state.baseRewardAmount || 800;
+        const reward = state.isMission ? 1000 : state.baseRewardAmount || 3000;
 
         const eventPayload = {
           userId: routeData.userId || 1,
