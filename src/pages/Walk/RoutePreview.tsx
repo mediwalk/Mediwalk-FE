@@ -42,7 +42,6 @@ const RoutePreview = () => {
     setRouteData,
     setFocusedLocation,
     bins,
-    myLocation,
     setSelectedBinId,
   } = useOutletContext<WalkContextType>();
 
@@ -178,12 +177,30 @@ const RoutePreview = () => {
 
   const handleAuthenticate = async () => {
     try {
+      const liveLocation = await new Promise<{ lat: number; lng: number }>(
+        (resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error("위치 정보를 지원하지 않는 브라우저입니다."));
+          }
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              resolve({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              });
+            },
+            (error) => reject(error),
+            { enableHighAccuracy: true },
+          );
+        },
+      );
+
       const proximityRes = await api.get(
         `/collection-locations/${binId}/destination-proximity`,
         {
           params: {
-            currentLatitude: myLocation?.lat,
-            currentLongitude: myLocation?.lng,
+            currentLatitude: liveLocation.lat,
+            currentLongitude: liveLocation.lng,
           },
         },
       );
@@ -199,7 +216,7 @@ const RoutePreview = () => {
         state: {
           ...state,
           routeData: previewData,
-          myLocation: myLocation,
+          myLocation: liveLocation,
         },
       });
     } catch (error: any) {
@@ -207,7 +224,9 @@ const RoutePreview = () => {
       if (error.response?.data?.message) {
         setErrorMessage(error.response.data.message.replace(".", ".\n"));
       } else {
-        setErrorMessage("서버와 통신 중 문제가 발생했습니다.");
+        setErrorMessage(
+          "위치 정보를 가져오거나 서버와 통신 중 문제가 발생했습니다.",
+        );
       }
       setIsErrorModalOpen(true);
     }
